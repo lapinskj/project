@@ -37,9 +37,12 @@ class MedicineOrder(models.Model):
 class Medicine(models.Model):
     name = models.CharField(max_length=25)
     price = models.FloatField()
+    brand = models.CharField(max_length=30)
+    capacity = models.CharField(max_length=30)
+    dose = models.CharField(max_length=30)
 
     def __str__(self):
-        return f'({self.id}) {self.name} {self.price}'
+        return f'({self.id}) {self.name} {self.brand} {self.capacity} {self.dose} {self.price}'
 
 
 class MedicineOrderItem(models.Model):

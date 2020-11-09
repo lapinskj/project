@@ -10,10 +10,7 @@ class Medicines extends Component {
         this.state = {
             modal: false,
             medicinesList: [],
-            activeItem: {
-                name: "",
-                price: null
-            },
+            activeItem: {},
         };
     }
     componentDidMount() {
@@ -47,10 +44,12 @@ class Medicines extends Component {
             .delete(`medicines/${item.id}`)
             .then(res => this.refreshList());
     };
+
     createItem = () => {
-        const item = { name: "", surname: "", age: null };
+        const item = {};
         this.setState({ activeItem: item, modal: !this.state.modal });
     };
+
     editItem = item => {
         this.setState({ activeItem: item, modal: !this.state.modal });
     };
@@ -60,7 +59,7 @@ class Medicines extends Component {
         return medicinesItems.map(item => (
             <li key={item.id}>
             <span>
-              {item.name} {item.price}
+              {item.name} {item.dose} {item.capacity} {item.brand} {item.price}
             </span>
                 <span>
               <button onClick={() => this.editItem(item)} className="btn btn-info ml-2"> Edit </button>

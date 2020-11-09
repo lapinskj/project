@@ -39,7 +39,7 @@ class SearchMedicines extends Component {
         return medicinesItems.map(item => (
             <li key={item.id}>
             <span>
-              {item.name} {item.price}
+              {item.name} {item.dose} {item.capacity} {item.brand} {item.price}
             </span>
             </li>
         ));

@@ -14,7 +14,7 @@ class MedicineOrder extends Component {
             medicineSearchValue: "",
             medicinesList: [],
             activeMedicine: null,
-            orderItem: { medicine: null, amount: null},
+            orderItem: {},
         };
     }
 
@@ -79,7 +79,7 @@ class MedicineOrder extends Component {
         const medicinesList = this.state.medicinesList;
         return medicinesList.map(medicine => (
             <option value={medicine.id}>
-                {medicine.id} {medicine.name} {medicine.price}
+                {medicine.id} {medicine.name} {medicine.dose} {medicine.capacity} {medicine.brand} {medicine.price}
             </option>
         ));
     };
@@ -125,7 +125,7 @@ class MedicineOrder extends Component {
                 { medicineOrder.medicineOrderItems.map(orderitem => (
                     <span key={orderitem.id}>
                         <p>
-                            {orderitem.medicine.name} {orderitem.medicine.price} x {orderitem.amount}
+                            -> {orderitem.medicine.name} {orderitem.medicine.dose} {orderitem.medicine.capacity} {orderitem.medicine.brand} {orderitem.medicine.price} x {orderitem.amount}
                         </p>
                         <button onClick={() => this.handleDelete(orderitem)} className="btn btn-danger"> Delete </button>
                     </span>

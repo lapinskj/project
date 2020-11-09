@@ -17,7 +17,7 @@ class AddMedicineOrder extends Component {
                 age: null
             },
             medicineSearchValues: [],
-            orderItems: [{ medicine: "", amount: null}],
+            orderItems: [{}],
             customerSearchValue: {},
             activeCustomer: null,
             customersList: [],
@@ -87,7 +87,7 @@ class AddMedicineOrder extends Component {
         if (medicinesList) {
             return medicinesList.map(medicineItem => (
                 <option value={medicineItem.id}>
-                    {medicineItem.id} {medicineItem.name} {medicineItem.price}
+                    {medicineItem.id} {medicineItem.name} {medicineItem.dose} {medicineItem.capacity} {medicineItem.brand} {medicineItem.price}
                 </option>
             ));
         }

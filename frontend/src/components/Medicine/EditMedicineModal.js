@@ -41,6 +41,36 @@ export default class EditMedicineModal extends Component {
                             />
                         </FormGroup>
                         <FormGroup>
+                            <Label for="dose">Dose</Label>
+                            <Input
+                                type="text"
+                                name="dose"
+                                value={this.state.activeItem.dose}
+                                onChange={this.handleChange}
+                                placeholder="Enter dose"
+                            />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label for="capacity">Capacity</Label>
+                            <Input
+                                type="text"
+                                name="capacity"
+                                value={this.state.activeItem.capacity}
+                                onChange={this.handleChange}
+                                placeholder="Enter capacity"
+                            />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label for="brand">Brand</Label>
+                            <Input
+                                type="text"
+                                name="brand"
+                                value={this.state.activeItem.brand}
+                                onChange={this.handleChange}
+                                placeholder="Enter brand"
+                            />
+                        </FormGroup>
+                        <FormGroup>
                             <Label for="price">Price</Label>
                             <Input
                                 type="number"

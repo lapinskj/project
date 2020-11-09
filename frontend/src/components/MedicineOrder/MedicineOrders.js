@@ -84,7 +84,7 @@ class MedicineOrders extends Component {
                    { item.medicineOrderItems.map(orderitem => (
                        <span key={orderitem.id}>
                            <p>
-                                -> {orderitem.medicine.name} {orderitem.medicine.price} x {orderitem.amount}
+                                -> {orderitem.medicine.name} {orderitem.medicine.dose} {orderitem.medicine.capacity} {orderitem.medicine.brand} {orderitem.medicine.price} x {orderitem.amount}
                            </p>
                        </span>
                    ))}

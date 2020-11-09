@@ -24,7 +24,7 @@ class MedicineOrderItemSerializer(serializers.ModelSerializer):
 class MedicineListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Medicine
-        fields = ('id', 'name', 'price')
+        fields = ('id', 'name', 'price', 'brand', 'capacity', 'dose')
 
 
 class MedicineOrderItemListSerializer(serializers.ModelSerializer):
