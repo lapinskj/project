@@ -1,22 +1,50 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-from pharmacy.models import Customer, MedicineOrder, Medicine, MedicineOrderItem
+from pharmacy.models import *
 from pharmacy.serializers import *
 from rest_framework.decorators import action
+from rest_framework import viewsets, status
+from rest_framework_simplejwt.views import TokenObtainPairView
+import django_filters
+from django_filters import rest_framework as filters
 
 
+# Filter class
+class CustomerFilter(filters.FilterSet):
+    pesel = filters.NumberFilter(field_name='pesel', lookup_expr='contains')
+
+    class Meta:
+        model = Customer
+        fields = ['pesel']
+
+
+class MedicineFilter(filters.FilterSet):
+    name = filters.CharFilter(field_name='name', lookup_expr='contains')
+
+    class Meta:
+        model = Medicine
+        fields = ['name']
+
+
+# Token class
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
+# Model viewsets
 class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
+    filterset_class = CustomerFilter
 
-    def get_queryset(self):
-        queryset = Customer.objects.all()
-        pesel = self.request.query_params.get('pesel', None)
-        if pesel:
-            queryset = queryset.filter(pesel__icontains=pesel)
-        print(queryset)
-        return queryset
+#    def get_queryset(self):
+#        queryset = Customer.objects.all()
+#        pesel = self.request.query_params.get('pesel', None)
+#        if pesel:
+#            queryset = queryset.filter(pesel__icontains=pesel)
+#        print(queryset)
+#        return queryset
 
 
 class MedicineOrderViewSet(viewsets.ModelViewSet):
@@ -47,15 +75,27 @@ class MedicineOrderViewSet(viewsets.ModelViewSet):
 class MedicineViewSet(viewsets.ModelViewSet):
     queryset = Medicine.objects.all()
     serializer_class = MedicineSerializer
+    filterset_class = MedicineFilter
 
-    def get_queryset(self):
-        queryset = Medicine.objects.all()
-        name = self.request.query_params.get('name', None)
-        if name:
-            queryset = queryset.filter(name__icontains=name)
-        return queryset
+#    def get_queryset(self):
+#        queryset = Medicine.objects.all()
+#        name = self.request.query_params.get('name', None)
+#        if name:
+#            queryset = queryset.filter(name__icontains=name)
+#        return queryset
+
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return MedicineListSerializer
+        return MedicineSerializer
 
 
 class MedicineOrderItemViewSet(viewsets.ModelViewSet):
     queryset = MedicineOrderItem.objects.all()
     serializer_class = MedicineOrderItemSerializer
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+

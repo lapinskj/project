@@ -1,10 +1,34 @@
 from rest_framework import serializers
-from pharmacy.models import Customer, MedicineOrder, Medicine, MedicineOrderItem
+from pharmacy.models import *
+from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from djoser.serializers import UserCreateSerializer, UserSerializer
+User = get_user_model()
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['if_staff'] = user.is_staff
+        return token
+
+
+class UserCreateSerializer(UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
+        model = User
+        fields = ('id', 'email', 'name', 'password', 'is_staff')
 
 
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
+        fields = '__all__'
+
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
         fields = '__all__'
 
 
@@ -22,15 +46,17 @@ class MedicineOrderItemSerializer(serializers.ModelSerializer):
 
 # GET serializers
 class MedicineListSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(many=True)
+
     class Meta:
         model = Medicine
-        fields = ('id', 'name', 'price', 'brand', 'capacity', 'dose')
+        fields = '__all__'
 
 
 class MedicineOrderItemListSerializer(serializers.ModelSerializer):
     medicine = MedicineListSerializer()
-    class Meta:
 
+    class Meta:
         model = MedicineOrderItem
         fields = ('id', 'medicine', 'amount')
 
