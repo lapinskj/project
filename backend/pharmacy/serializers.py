@@ -6,14 +6,6 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 User = get_user_model()
 
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        token['if_staff'] = user.is_staff
-        return token
-
-
 class UserCreateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         model = User

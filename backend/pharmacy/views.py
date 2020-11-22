@@ -5,6 +5,7 @@ from pharmacy.models import *
 from pharmacy.serializers import *
 from rest_framework.decorators import action
 from rest_framework import viewsets, status
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 import django_filters
 from django_filters import rest_framework as filters
@@ -25,11 +26,6 @@ class MedicineFilter(filters.FilterSet):
     class Meta:
         model = Medicine
         fields = ['name']
-
-
-# Token class
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
 
 
 # Model viewsets

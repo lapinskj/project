@@ -109,7 +109,7 @@ export const login = (email, password) => async dispatch => {
     const body = JSON.stringify({ email, password });
 
     try {
-        const res = await axios.post(`http://localhost:8000/auth/jwt/token/`, body, config);
+        const res = await axios.post(`http://localhost:8000/auth/jwt/create/`, body, config);
 
         dispatch({
             type: LOGIN_SUCCESS,
