@@ -1,14 +1,14 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework import status
 from pharmacy.models import *
 from pharmacy.serializers import *
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
 from rest_framework import viewsets, status
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 import django_filters
 from django_filters import rest_framework as filters
+from .permissions import *
 
 
 # Filter class
@@ -33,6 +33,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     filterset_class = CustomerFilter
+    permission_classes = [IsStaff]
 
 #    def get_queryset(self):
 #        queryset = Customer.objects.all()
@@ -72,6 +73,7 @@ class MedicineViewSet(viewsets.ModelViewSet):
     queryset = Medicine.objects.all()
     serializer_class = MedicineSerializer
     filterset_class = MedicineFilter
+    permission_classes = [IsStaffOrReadOnly]
 
 #    def get_queryset(self):
 #        queryset = Medicine.objects.all()
@@ -94,4 +96,5 @@ class MedicineOrderItemViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [IsStaffOrReadOnly]
 

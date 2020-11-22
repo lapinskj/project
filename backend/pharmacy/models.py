@@ -15,15 +15,20 @@ ORDER_STATUSES = (
 
 
 class UserAccountManager(BaseUserManager):
-    def create_user(self, email, name, surname, is_staff, phone_number, password=None):
+    def create_user(self, name, surname, email, phone_number, pesel, is_staff, password=None):
         if not email:
             raise ValueError('Users must have an email address')
 
         email = self.normalize_email(email)
-        user = self.model(email=email, name=name, surname=surname, is_staff=is_staff, phone_number=phone_number)
+        user = self.model(name=name, surname=surname, email=email, phone_number=phone_number, pesel=pesel,
+                          is_staff=is_staff)
 
         user.set_password(password)
         user.save()
+
+        if not is_staff:
+            customer = Customer(name=name, surname=surname, pesel=pesel, user=user)
+            customer.save()
 
         return user
 
@@ -36,21 +41,22 @@ class UserAccountManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
-        return self._create_user( email, password, **extra_fields)
+        return self._create_user(email, password, **extra_fields)
 
 
 class UserAccount(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     surname = models.CharField(max_length=255, default="")
+    email = models.EmailField(max_length=255, unique=True)
     phone_number = PhoneNumberField(default="")
+    pesel = models.IntegerField(default=00000000000)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     objects = UserAccountManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'surname', 'is_staff', 'phone_number']
+    REQUIRED_FIELDS = ['name', 'surname', 'is_staff', 'phone_number', 'pesel']
 
     def get_full_name(self):
         return self.name
@@ -66,6 +72,7 @@ class Customer(models.Model):
     name = models.CharField(max_length=20)
     surname = models.CharField(max_length=20)
     pesel = models.IntegerField()
+    user = models.ForeignKey(UserAccount, on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
         return f'({self.id}) {self.pesel} {self.name} {self.surname}'
