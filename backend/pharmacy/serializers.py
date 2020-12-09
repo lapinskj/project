@@ -36,12 +36,6 @@ class MedicineSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MedicineOrderItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MedicineOrderItem
-        fields = '__all__'
-
-
 # GET serializers
 class MedicineListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=True)
@@ -51,7 +45,15 @@ class MedicineListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MedicineOrderItemListSerializer(serializers.ModelSerializer):
+class MedicineOrderItemGetSerializerFull(serializers.ModelSerializer):
+    medicine = MedicineListSerializer()
+
+    class Meta:
+        model = MedicineOrderItem
+        fields = '__all__'
+
+
+class MedicineOrderItemGetSerializer(serializers.ModelSerializer):
     medicine = MedicineListSerializer()
 
     class Meta:
@@ -61,7 +63,7 @@ class MedicineOrderItemListSerializer(serializers.ModelSerializer):
 
 class MedicineOrderSerializerList(serializers.ModelSerializer):
     customer = CustomerSerializer()
-    medicineOrderItems = MedicineOrderItemListSerializer(many=True)
+    medicineOrderItems = MedicineOrderItemGetSerializer(many=True)
 
     class Meta:
         model = MedicineOrder
@@ -69,6 +71,22 @@ class MedicineOrderSerializerList(serializers.ModelSerializer):
 
 
 # POST / PUT serializers
+class MedicineOrderItemCreateSerializerFull(serializers.ModelSerializer):
+    class Meta:
+        model = MedicineOrderItem
+        fields = '__all__'
+
+    def create(self, validated_data):
+        medicine_order_id = validated_data['medicineOrder'].id
+        medicine_order = MedicineOrder.objects.get(pk=medicine_order_id)
+        amount = validated_data['amount']
+        medicine_price = validated_data['medicine'].price
+        medicine_order.total_price = medicine_order.total_price + amount * medicine_price
+        medicine_order.save()
+        medicine_order_item = MedicineOrderItem.objects.create(**validated_data)
+        return medicine_order_item
+
+
 class MedicineOrderItemCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = MedicineOrderItem

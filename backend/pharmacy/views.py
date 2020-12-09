@@ -111,7 +111,17 @@ class MedicineViewSet(viewsets.ModelViewSet):
 
 class MedicineOrderItemViewSet(viewsets.ModelViewSet):
     queryset = MedicineOrderItem.objects.all()
-    serializer_class = MedicineOrderItemSerializer
+    serializer_class = MedicineOrderItemGetSerializerFull
+
+    def destroy(self, request, pk=None, *args, **kwargs):
+        if pk:
+            medicine_order_item = MedicineOrderItem.objects.get(id=pk)
+            amount = medicine_order_item.amount
+            medicine_price = medicine_order_item.medicine.price
+            medicine_order = MedicineOrder.objects.get(id=medicine_order_item.medicineOrder.id)
+            medicine_order.total_price = medicine_order.total_price - amount * medicine_price
+            medicine_order.save()
+        return super(MedicineOrderItemViewSet, self).destroy(request, *args, **kwargs)
 
     def get_queryset(self):
         queryset = MedicineOrderItem.objects.all()
@@ -119,6 +129,11 @@ class MedicineOrderItemViewSet(viewsets.ModelViewSet):
         if not is_staff:
             queryset = queryset.filter(medicineOrder__customer__user=self.request.user)
         return queryset
+
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return MedicineOrderItemGetSerializerFull
+        return MedicineOrderItemCreateSerializerFull
 
     def get_permissions(self):
         permission_classes = []
