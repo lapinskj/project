@@ -90,9 +90,9 @@ class MedicineOrderViewSet(viewsets.ModelViewSet):
             medicine_order.orderStatus = order_status
             medicine_order.save()
             serializer = MedicineOrderSerializerList(medicine_order)
-            if not medicine_order.customer.user.is_staff:
+            if medicine_order.customer.user and not medicine_order.customer.user.is_staff:
                 email = medicine_order.customer.user.email
-                send_mail('Test wysyłania mejli xd', order_status, 'from@example.com', [email])
+                send_mail('Test wysyłania mejli xd', order_status.lower(), 'from@example.com', [email])
             return Response(serializer.data)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
