@@ -18,6 +18,12 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CustomerSerializerUser(serializers.ModelSerializer):
+    class Meta:
+        model = Customer
+        fields = ('id', 'name', 'surname')
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -77,7 +83,6 @@ class MedicineOrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        print(validated_data)
         order_items = validated_data.pop('medicineOrderItems')
         medicine_order = MedicineOrder.objects.create(**validated_data)
         total_price = 0

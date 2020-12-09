@@ -9,6 +9,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 import django_filters
 from django_filters import rest_framework as filters
 from .permissions import *
+from django.core.mail import send_mail
 
 
 # Filter class
@@ -33,38 +34,65 @@ class CustomerViewSet(viewsets.ModelViewSet):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     filterset_class = CustomerFilter
-    permission_classes = [IsStaff]
 
-#    def get_queryset(self):
-#        queryset = Customer.objects.all()
-#        pesel = self.request.query_params.get('pesel', None)
-#        if pesel:
-#            queryset = queryset.filter(pesel__icontains=pesel)
-#        print(queryset)
-#        return queryset
+    def get_permissions(self):
+        permission_classes = []
+        if self.action in ('list', 'retrieve', 'update', 'partial_update'):
+            permission_classes = [IsLoggedInUserOrAdmin]
+        elif self.action in ('create', 'destroy'):
+            permission_classes = [IsStaff]
+        return [permission() for permission in permission_classes]
+
+    def get_queryset(self):
+        queryset = Customer.objects.all()
+        is_staff = self.request.user.is_staff
+        if not is_staff:
+            queryset = queryset.filter(user=self.request.user)
+        return queryset
+
+    def get_serializer_class(self):
+        if self.request.user.is_staff:
+            return CustomerSerializer
+        return CustomerSerializerUser
 
 
 class MedicineOrderViewSet(viewsets.ModelViewSet):
     queryset = MedicineOrder.objects.all()
     serializer_class = MedicineOrderSerializer
 
-#    def list(self, request, *args, **kwargs):
-#        queryset = MedicineOrder.objects.all()
-#        serializer = MedicineOrderSerializerList(queryset, many=True)
-#        return Response(serializer.data)
+    def get_permissions(self):
+        permission_classes = []
+        if self.action in ('create', 'list', 'retrieve'):
+            permission_classes = [IsLoggedInUserOrAdmin]
+        elif self.action in ('destroy', 'update', 'partial_update'):
+            permission_classes = [IsStaff]
+        return [permission() for permission in permission_classes]
+
     def get_serializer_class(self):
         if self.request.method in ['GET']:
             return MedicineOrderSerializerList
         return MedicineOrderSerializer
 
+    def get_queryset(self):
+        queryset = MedicineOrder.objects.all()
+        is_staff = self.request.user.is_staff
+        if not is_staff:
+            queryset = queryset.filter(customer__user=self.request.user)
+        return queryset
+
     @action(detail=True, methods=['put'], url_path='updateStatus')
     def update_order_status(self, request, pk=None):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         order_status = request.data.get('orderStatus')
         if pk:
             medicine_order = MedicineOrder.objects.get(id=pk)
             medicine_order.orderStatus = order_status
             medicine_order.save()
             serializer = MedicineOrderSerializerList(medicine_order)
+            if not medicine_order.customer.user.is_staff:
+                email = medicine_order.customer.user.email
+                send_mail('Test wysyłania mejli xd', order_status, 'from@example.com', [email])
             return Response(serializer.data)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -75,13 +103,6 @@ class MedicineViewSet(viewsets.ModelViewSet):
     filterset_class = MedicineFilter
     permission_classes = [IsStaffOrReadOnly]
 
-#    def get_queryset(self):
-#        queryset = Medicine.objects.all()
-#        name = self.request.query_params.get('name', None)
-#        if name:
-#            queryset = queryset.filter(name__icontains=name)
-#        return queryset
-
     def get_serializer_class(self):
         if self.request.method in ['GET']:
             return MedicineListSerializer
@@ -91,6 +112,21 @@ class MedicineViewSet(viewsets.ModelViewSet):
 class MedicineOrderItemViewSet(viewsets.ModelViewSet):
     queryset = MedicineOrderItem.objects.all()
     serializer_class = MedicineOrderItemSerializer
+
+    def get_queryset(self):
+        queryset = MedicineOrderItem.objects.all()
+        is_staff = self.request.user.is_staff
+        if not is_staff:
+            queryset = queryset.filter(medicineOrder__customer__user=self.request.user)
+        return queryset
+
+    def get_permissions(self):
+        permission_classes = []
+        if self.action in ('create', 'list', 'retrieve', 'destroy'):
+            permission_classes = [IsLoggedInUserOrAdmin]
+        elif self.action in ('update', 'partial_update'):
+            permission_classes = [IsStaff]
+        return [permission() for permission in permission_classes]
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

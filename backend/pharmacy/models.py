@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from phonenumber_field.modelfields import PhoneNumberField
+from django.db.models.base import ObjectDoesNotExist
 
 NEW = 'Rozpoczęte'
 PROCESSED = 'W trakcie realizacji'
@@ -27,8 +28,13 @@ class UserAccountManager(BaseUserManager):
         user.save()
 
         if not is_staff:
-            customer = Customer(name=name, surname=surname, pesel=pesel, user=user)
-            customer.save()
+            try:
+                existing_customer = Customer.objects.get(pesel=pesel)
+                existing_customer.user = user
+                existing_customer.save()
+            except ObjectDoesNotExist:
+                customer = Customer(name=name, surname=surname, pesel=pesel, user=user)
+                customer.save()
 
         return user
 
@@ -46,9 +52,9 @@ class UserAccountManager(BaseUserManager):
 
 class UserAccount(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255)
-    surname = models.CharField(max_length=255, default="")
+    surname = models.CharField(max_length=255)
     email = models.EmailField(max_length=255, unique=True)
-    phone_number = PhoneNumberField(default="")
+    phone_number = PhoneNumberField()
     pesel = models.IntegerField(default=00000000000)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -65,7 +71,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
         return self.name
 
     def __str__(self):
-        return self.email
+        return f'({self.email} {self.name} {self.surname}'
 
 
 class Customer(models.Model):

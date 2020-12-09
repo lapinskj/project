@@ -24,10 +24,15 @@ class IsStaffOrReadOnly(permissions.BasePermission):
 
 
 class IsLoggedInUserOrAdmin(permissions.BasePermission):
-
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        owner = obj.owner if hasattr(obj, 'owner') else obj
+        owner = obj
+        if hasattr(obj, 'user'):
+            owner = obj.user
+        elif hasattr(obj, 'customer'):
+            owner = obj.customer.user
+        elif hasattr(obj, 'medicineOrder'):
+            owner = obj.medicineOrder.customer.user
         return owner == request.user or request.user.is_staff
