@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from phonenumber_field.modelfields import PhoneNumberField
@@ -102,13 +103,29 @@ class Category(models.Model):
     name = models.CharField(max_length=150)
 
 
+def get_image_path(instance, filename):
+    fn, ext = os.path.splitext(filename)
+    return os.path.join('medicines', str(instance.id)+ext)
+
+
 class Medicine(models.Model):
     name = models.CharField(max_length=25)
     price = models.FloatField()
     brand = models.CharField(max_length=30)
     capacity = models.CharField(max_length=30)
     dose = models.CharField(max_length=30)
+    image = models.ImageField(upload_to=get_image_path, blank=True, null=True)
     category = models.ManyToManyField(Category, related_name='medicines')
+
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            saved_image = self.image
+            self.image = None
+            super(Medicine, self).save(*args, **kwargs)
+            self.image = saved_image
+            if 'force_insert' in kwargs:
+                kwargs.pop('force_insert')
+        super(Medicine, self).save(*args, **kwargs)
 
     def __str__(self):
         return f'({self.id}) {self.name} {self.brand} {self.capacity} {self.dose} {self.price}'

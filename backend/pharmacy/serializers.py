@@ -39,6 +39,7 @@ class MedicineSerializer(serializers.ModelSerializer):
 # GET serializers
 class MedicineListSerializer(serializers.ModelSerializer):
     category = CategorySerializer(many=True)
+    image = serializers.ImageField()
 
     class Meta:
         model = Medicine

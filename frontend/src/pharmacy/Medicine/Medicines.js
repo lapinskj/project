@@ -82,6 +82,9 @@ class Medicines extends Component {
                 <span>
                     <h6>
                         {item.name} {item.dose} {item.capacity} {item.brand} {item.price}
+                        <div>
+                            <img class="w-25 h-25" src={item.image}/>
+                        </div>
                     </h6>
                     <ul>
                         Kategorie:

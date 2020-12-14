@@ -18,10 +18,13 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib import admin
 from .api import router
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
