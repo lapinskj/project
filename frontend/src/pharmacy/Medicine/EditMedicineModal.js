@@ -132,6 +132,16 @@ export default class EditMedicineModal extends Component {
                                 {this.renderCategories()}
                             </Input>
                         </FormGroup>
+                        <FormGroup>
+                            <Label for="quantity">Quantity</Label>
+                            <Input
+                                type="number"
+                                name="quantity"
+                                value={this.state.activeItem.quantity}
+                                onChange={this.handleChange}
+                                placeholder="Enter medicine quantity"
+                            />
+                        </FormGroup>
                     </Form>
                 </ModalBody>
                 <ModalFooter>

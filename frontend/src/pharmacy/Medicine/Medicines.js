@@ -45,7 +45,7 @@ class Medicines extends Component {
         };
         if (item.id) {
             axios
-                .put(`http://localhost:8000/medicines/${item.id}/`, item, config)
+                .patch(`http://localhost:8000/medicines/${item.id}/`, item, config)
                 .then(res => this.refreshList());
             return;
         }
@@ -81,7 +81,7 @@ class Medicines extends Component {
             <li key={item.id}>
                 <span>
                     <h6>
-                        {item.name} {item.dose} {item.capacity} {item.brand} {item.price}
+                        {item.name} {item.dose} {item.capacity} {item.brand} {item.price} {item.quantity}
                         <div>
                             <img class="w-25 h-25" src={item.image}/>
                         </div>

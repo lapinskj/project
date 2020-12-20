@@ -23,7 +23,6 @@ export const checkAuthenticated = () => async dispatch => {
             type: AUTHENTICATED_FAIL
         });
     }
-    console.log("aaaaaaaa")
     if (localStorage.getItem('access')) {
         const config = {
             headers: {

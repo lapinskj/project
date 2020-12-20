@@ -80,6 +80,29 @@ class MedicineOrderViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(customer__user=self.request.user)
         return queryset
 
+    def create(self, request, *args, **kwargs):
+        order_items = request.data.get('medicineOrderItems')
+        print(order_items)
+        for order_item in order_items:
+            print(order_item['amount'])
+            print(order_item['medicine'])
+            medicine = Medicine.objects.get(pk=order_item['medicine'])
+            if medicine.quantity < int(order_item['amount']):
+                return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        return super(MedicineOrderViewSet, self).create(request, *args, **kwargs)
+
+    def destroy(self, request, pk=None, *args, **kwargs):
+        if pk:
+            medicine_order = MedicineOrder.objects.get(id=pk)
+            order_items = medicine_order.medicineOrderItems.all()
+            for orderItem in order_items:
+                medicine_pk = orderItem.medicine.id
+                medicine = Medicine.objects.get(pk=medicine_pk)
+                medicine.quantity = medicine.quantity + orderItem.amount
+                medicine.save()
+        return super(MedicineOrderViewSet, self).destroy(request, *args, **kwargs)
+
     @action(detail=True, methods=['put'], url_path='updateStatus')
     def update_order_status(self, request, pk=None):
         if not request.user.is_staff:
@@ -113,13 +136,36 @@ class MedicineOrderItemViewSet(viewsets.ModelViewSet):
     queryset = MedicineOrderItem.objects.all()
     serializer_class = MedicineOrderItemGetSerializerFull
 
+    def create(self, request, *args, **kwargs):
+        medicine_order_id = request.data.get('medicineOrder')
+        medicine_order = MedicineOrder.objects.get(pk=medicine_order_id)
+        amount = int(request.data.get('amount'))
+        medicine_id = request.data.get('medicine')
+        medicine = Medicine.objects.get(pk=medicine_id)
+        medicine_quantity = medicine.quantity
+        if medicine_quantity < amount:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        medicine.quantity = medicine_quantity - amount
+        medicine.save()
+        medicine_order.total_price = medicine_order.total_price + (amount * medicine.price)
+        medicine_order.save()
+        serializer = MedicineOrderItemCreateSerializerFull(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def destroy(self, request, pk=None, *args, **kwargs):
         if pk:
             medicine_order_item = MedicineOrderItem.objects.get(id=pk)
             amount = medicine_order_item.amount
-            medicine_price = medicine_order_item.medicine.price
+            medicine = Medicine.objects.get(pk=medicine_order_item.medicine.id)
+            medicine_quantity = medicine.quantity
+            medicine.quantity = medicine_quantity + amount
+            medicine.save()
             medicine_order = MedicineOrder.objects.get(id=medicine_order_item.medicineOrder.id)
-            medicine_order.total_price = medicine_order.total_price - amount * medicine_price
+            medicine_order.total_price = medicine_order.total_price - (amount * medicine.price)
+            print(medicine_order.total_price)
             medicine_order.save()
         return super(MedicineOrderItemViewSet, self).destroy(request, *args, **kwargs)
 

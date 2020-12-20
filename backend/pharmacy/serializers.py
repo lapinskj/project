@@ -75,17 +75,7 @@ class MedicineOrderSerializerList(serializers.ModelSerializer):
 class MedicineOrderItemCreateSerializerFull(serializers.ModelSerializer):
     class Meta:
         model = MedicineOrderItem
-        fields = '__all__'
-
-    def create(self, validated_data):
-        medicine_order_id = validated_data['medicineOrder'].id
-        medicine_order = MedicineOrder.objects.get(pk=medicine_order_id)
-        amount = validated_data['amount']
-        medicine_price = validated_data['medicine'].price
-        medicine_order.total_price = medicine_order.total_price + amount * medicine_price
-        medicine_order.save()
-        medicine_order_item = MedicineOrderItem.objects.create(**validated_data)
-        return medicine_order_item
+        fields = ('medicineOrder', 'medicine', 'amount')
 
 
 class MedicineOrderItemCreateSerializer(serializers.ModelSerializer):
@@ -108,6 +98,8 @@ class MedicineOrderSerializer(serializers.ModelSerializer):
         for orderItem in order_items:
             medicine_pk = orderItem['medicine'].id
             medicine = Medicine.objects.get(pk=medicine_pk)
+            medicine.quantity = medicine.quantity - orderItem['amount']
+            medicine.save()
             total_price = total_price + (orderItem['amount'] * medicine.price)
             MedicineOrderItem.objects.create(medicineOrder=medicine_order, **orderItem)
         medicine_order.total_price = total_price

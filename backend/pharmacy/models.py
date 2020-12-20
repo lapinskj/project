@@ -87,7 +87,7 @@ class Customer(models.Model):
 
 class MedicineOrder(models.Model):
     customer = models.ForeignKey(Customer, related_name='medicineOrders', on_delete=models.CASCADE)
-    total_price = models.FloatField(default=0)
+    total_price = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     orderStatus = models.CharField(max_length=100, choices=ORDER_STATUSES, default=NEW)
     created = models.DateField(auto_now_add=True)
 
@@ -110,7 +110,8 @@ def get_image_path(instance, filename):
 
 class Medicine(models.Model):
     name = models.CharField(max_length=25)
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    quantity = models.PositiveIntegerField(default=10)
     brand = models.CharField(max_length=30)
     capacity = models.CharField(max_length=30)
     dose = models.CharField(max_length=30)

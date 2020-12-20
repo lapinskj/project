@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, {Component, useState} from "react";
 import EditCustomerModal from "./EditCustomerModal";
 import axios from "axios";
 
@@ -13,9 +13,11 @@ class Customers extends Component {
             activeItem: {},
         };
     }
+
     componentDidMount() {
         this.refreshList();
     }
+
     refreshList = () => {
         const config = {
             headers: {

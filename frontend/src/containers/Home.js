@@ -1,16 +1,25 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {connect} from "react-redux";
 
-const home = () => (
-    <div className='container'>
-        <div className="jumbotron mt-5">
-            <h1 className="display-4">Welcome to Auth System!</h1>
-            <p className="lead">This is a super cool authentication system with all kinds of functionalities.</p>
-            <hr className="my-4" />
-            <p>Go ahead and login!</p>
-            <Link className="btn btn-primary btn-lg" to='/login' role="button">Login</Link>
-        </div>
-    </div>
-);
+const home = ({ user }) => {
+    if (user!==null){
+        return (
+            <div className='container'>
+                <div className="jumbotron mt-5">
+                    <h3 className="display-4">Welcome to Pharmacy System!</h3>
+                    <hr className="my-4"/>
+                    <p>{user.name}</p>
+                </div>
+            </div>
+        );
+    }
+    return null;
 
-export default home;
+
+};
+
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+export default connect(mapStateToProps)(home);

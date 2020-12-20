@@ -7,23 +7,17 @@ import Activate from './containers/Activate';
 import ResetPassword from './containers/ResetPassword';
 import ResetPasswordConfirm from './containers/ResetPasswordConfirm';
 import Customers from "./pharmacy/Customer/Customers";
-import Dashboard from "./pharmacy/Dashboard/Dashboard";
 import Medicines from "./pharmacy/Medicine/Medicines";
 import SearchMedicines from "./pharmacy/Medicine/SearchMedicines";
 import MedicineOrder from "./pharmacy/MedicineOrder/MedicineOrder";
 import MedicineOrders from "./pharmacy/MedicineOrder/MedicineOrders";
 import AddMedicineOrder from "./pharmacy/MedicineOrder/AddMedicineOrder";
 import Categories from "./pharmacy/Category/Categories";
-
-
 import { Provider } from 'react-redux';
 import store from './store';
-
 import Layout from './hocs/Layout';
 
 const App = () => (
-
-
 
     <Provider store={store}>
         <Router>
@@ -36,9 +30,6 @@ const App = () => (
                         <Route exact path='/reset_password' component={ResetPassword}/>
                         <Route exact path='/password/reset/confirm/:uid/:token' component={ResetPasswordConfirm}/>
                         <Route exact path='/activate/:uid/:token' component={Activate}/>
-                        <Route exact path="/">
-                            <Dashboard/>
-                        </Route>
                         <Route exact path="/customers">
                             <Customers/>
                         </Route>
