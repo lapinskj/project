@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from pharmacy.models import *
 from django.contrib.auth import get_user_model
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from djoser.serializers import UserCreateSerializer, UserSerializer
 User = get_user_model()
 
@@ -33,6 +32,12 @@ class CategorySerializer(serializers.ModelSerializer):
 class MedicineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Medicine
+        fields = '__all__'
+
+
+class NewOrderMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewOrderMessage
         fields = '__all__'
 
 

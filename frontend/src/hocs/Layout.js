@@ -9,6 +9,7 @@ const Layout = (props) => {
             try {
                 await props.checkAuthenticated();
                 await props.load_user();
+                console.log(props)
             } catch (err) {
 
             }
@@ -18,11 +19,15 @@ const Layout = (props) => {
     }, []);
 
     return (
-        <div>
-            <Navbar />
-            {props.children}
-
+        <div className="c-app c-default-layout">
+            <div className="c-wrapper">
+                <Navbar />
+                <div className="c-body">
+                    {props.children}
+                </div>
+            </div>
         </div>
+
     );
 };
 

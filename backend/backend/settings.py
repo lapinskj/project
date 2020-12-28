@@ -201,6 +201,8 @@ SIMPLE_JWT = {
 
 CSRF_COOKIE_SECURE = False
 
+DOMAIN = 'localhost:3000'
+SITE_NAME = 'Pharmacy App'
 DJOSER = {
     'LOGIN_FIELD': 'email',
     'USER_CREATE_PASSWORD_RETYPE': True,

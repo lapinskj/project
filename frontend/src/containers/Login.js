@@ -24,8 +24,8 @@ const Login = ({ login, isAuthenticated }) => {
     
     return (
         <div className='container mt-5'>
-            <h1>Sign In</h1>
-            <p>Sign into your Account</p>
+            <h1>Login</h1>
+            <p>Login to your account</p>
             <form onSubmit={e => onSubmit(e)}>
                 <div className='form-group'>
                     <input 
@@ -52,11 +52,7 @@ const Login = ({ login, isAuthenticated }) => {
                 </div>
                 <button className='btn btn-primary' type='submit'>Login</button>
             </form>
-            <p className='mt-3'>
-            Don't have an account? <Link to='/signup'>Sign Up</Link>
-            </p>
-            <p className='mt-3'>
-            Forgot your Password? <Link to='/reset_password'>Reset Password</Link>
+            <p className='mt-3'><Link to='/reset_password'>Forgot password?</Link>
             </p>
         </div>
     );

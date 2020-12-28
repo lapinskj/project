@@ -55,6 +55,15 @@ class CustomerViewSet(viewsets.ModelViewSet):
             return CustomerSerializer
         return CustomerSerializerUser
 
+    @action(detail=False, methods=['get'], url_path='countCustomers')
+    def count_customers(self, request):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        queryset = self.filter_queryset(self.get_queryset())
+        count = queryset.count()
+        content = {'count': count}
+        return Response(content)
+
 
 class MedicineOrderViewSet(viewsets.ModelViewSet):
     queryset = MedicineOrder.objects.all()
@@ -82,10 +91,7 @@ class MedicineOrderViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         order_items = request.data.get('medicineOrderItems')
-        print(order_items)
         for order_item in order_items:
-            print(order_item['amount'])
-            print(order_item['medicine'])
             medicine = Medicine.objects.get(pk=order_item['medicine'])
             if medicine.quantity < int(order_item['amount']):
                 return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -119,6 +125,16 @@ class MedicineOrderViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+    @action(detail=False, methods=['get'], url_path='countOrders')
+    def count_orders(self, request):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(orderStatus='Zakończone')
+        count = queryset.count()
+        content = {'count': count}
+        return Response(content)
+
 
 class MedicineViewSet(viewsets.ModelViewSet):
     queryset = Medicine.objects.all()
@@ -130,6 +146,15 @@ class MedicineViewSet(viewsets.ModelViewSet):
         if self.request.method in ['GET']:
             return MedicineListSerializer
         return MedicineSerializer
+
+    @action(detail=False, methods=['get'], url_path='countMedicines')
+    def count_medicines(self, request):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        queryset = self.filter_queryset(self.get_queryset())
+        count = queryset.count()
+        content = {'count': count}
+        return Response(content)
 
 
 class MedicineOrderItemViewSet(viewsets.ModelViewSet):
@@ -165,7 +190,6 @@ class MedicineOrderItemViewSet(viewsets.ModelViewSet):
             medicine.save()
             medicine_order = MedicineOrder.objects.get(id=medicine_order_item.medicineOrder.id)
             medicine_order.total_price = medicine_order.total_price - (amount * medicine.price)
-            print(medicine_order.total_price)
             medicine_order.save()
         return super(MedicineOrderItemViewSet, self).destroy(request, *args, **kwargs)
 
@@ -188,6 +212,40 @@ class MedicineOrderItemViewSet(viewsets.ModelViewSet):
         elif self.action in ('update', 'partial_update'):
             permission_classes = [IsStaff]
         return [permission() for permission in permission_classes]
+
+
+class NewOrderMessageViewSet(viewsets.ModelViewSet):
+    queryset = NewOrderMessage.objects.all()
+    serializer_class = NewOrderMessageSerializer
+    permission_classes = [IsStaff]
+
+    @action(detail=False, methods=['get'], url_path='countUnread')
+    def count_unread(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(unread=True)
+        count = queryset.count()
+        content = {'count': count}
+        return Response(content)
+
+    @action(detail=True, methods=['put'], url_path='updateMessageRead')
+    def update_message_read(self, request, pk=None):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        message_unread = request.data.get('unread')
+        if pk:
+            order_message = NewOrderMessage.objects.get(id=pk)
+            order_message.unread = message_unread
+            order_message.save()
+            serializer = NewOrderMessageSerializer(order_message)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @action(detail=False, methods=['delete'], url_path='deleteAllRead')
+    def delete_all_read(self, request):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        NewOrderMessage.objects.filter(unread=False).delete()
+        return Response(status=status.HTTP_200_OK)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):

@@ -17,26 +17,36 @@ ORDER_STATUSES = (
 
 
 class UserAccountManager(BaseUserManager):
-    def create_user(self, name, surname, email, phone_number, pesel, is_staff, password=None):
+    def create_user(self, name, surname, email, phone_number, pesel, password=None):
         if not email:
             raise ValueError('Users must have an email address')
 
         email = self.normalize_email(email)
         user = self.model(name=name, surname=surname, email=email, phone_number=phone_number, pesel=pesel,
-                          is_staff=is_staff)
+                          is_staff=False)
 
         user.set_password(password)
         user.save()
 
-        if not is_staff:
-            try:
-                existing_customer = Customer.objects.get(pesel=pesel)
-                existing_customer.user = user
-                existing_customer.save()
-            except ObjectDoesNotExist:
+        try:
+            existing_customer = Customer.objects.get(pesel=pesel)
+            existing_customer.user = user
+            existing_customer.save()
+        except ObjectDoesNotExist:
                 customer = Customer(name=name, surname=surname, pesel=pesel, user=user)
                 customer.save()
 
+        return user
+
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError('The given email must be set')
+        email = email.lower()
+        if self.model.objects.filter(email=email).exists():
+            raise ValueError('This email is already in use')
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
         return user
 
     def create_superuser(self, email, password, **extra_fields):
@@ -44,9 +54,9 @@ class UserAccountManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
 
         if extra_fields.get('is_staff') is not True:
-            raise ValueError('Superuser must have is_staff=True.')
+            raise ValueError('Superuser must have is_staff=True')
         if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Superuser must have is_superuser=True.')
+            raise ValueError('Superuser must have is_superuser=True')
 
         return self._create_user(email, password, **extra_fields)
 
@@ -63,13 +73,7 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
     objects = UserAccountManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'surname', 'is_staff', 'phone_number', 'pesel']
-
-    def get_full_name(self):
-        return self.name
-
-    def get_short_name(self):
-        return self.name
+    REQUIRED_FIELDS = ['name', 'surname', 'phone_number', 'pesel']
 
     def __str__(self):
         return f'({self.email} {self.name} {self.surname}'
@@ -79,7 +83,7 @@ class Customer(models.Model):
     name = models.CharField(max_length=20)
     surname = models.CharField(max_length=20)
     pesel = models.IntegerField()
-    user = models.ForeignKey(UserAccount, on_delete=models.DO_NOTHING, null=True)
+    user = models.ForeignKey(UserAccount, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return f'({self.id}) {self.pesel} {self.name} {self.surname}'
@@ -96,6 +100,12 @@ class MedicineOrder(models.Model):
 
     def __str__(self):
         return f'({self.id} {self.created}) {self.customer} {self.total_price}'
+
+
+class NewOrderMessage(models.Model):
+    medicine_order = models.OneToOneField(MedicineOrder, on_delete=models.CASCADE, related_name='newOrderMessage')
+    started = models.DateTimeField(auto_now_add=True)
+    unread = models.BooleanField(default=True)
 
 
 class Category(models.Model):

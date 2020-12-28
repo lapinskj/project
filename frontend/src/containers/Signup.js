@@ -2,20 +2,21 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { signup } from '../actions/auth';
-import axios from "axios";
-import {SIGNUP_SUCCESS} from "../actions/types";
 
 const Signup = ({ signup, isAuthenticated }) => {
     const [formData, setFormData] = useState({
         name: '',
+        surname: '',
+        pesel: null,
         email: '',
+        phone_number: null,
         password: '',
         re_password: ''
     });
 
     const [accountCreated, setAccountCreated] = useState(false);
 
-    const { name, email, password, re_password } = formData;
+    const { name, surname, pesel, email,  phone_number, password, re_password } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
@@ -23,39 +24,10 @@ const Signup = ({ signup, isAuthenticated }) => {
         e.preventDefault();
 
         if (password === re_password) {
-            signup({ name, email, password, re_password });
+            signup({ name, surname, pesel, email,  phone_number, password, re_password });
             setAccountCreated(true);
         }
     };
-
-    const onSave = () => {
-        const body = { name, email, password, re_password };
-
-        if (password === re_password) {
-            axios
-                .post("http://localhost:8000/auth/users/", body)
-                .then(res => {
-                    setAccountCreated(true);
-                });
-        }
-    };
-
-
-    const onConfirm = () => {
-        const body = {
-            uid: "MQ",
-            token: "acvqed-9941b1c49f70bad04d6c3e5583c5f2f1"
-             };
-
-        axios
-            .post("http://localhost:8000/auth/users/activation/", body)
-            .then(res => {
-                setAccountCreated(true);
-            });
-
-    };
-
-
 
     if (isAuthenticated)
         return <Redirect to='/' />;
@@ -71,7 +43,7 @@ const Signup = ({ signup, isAuthenticated }) => {
                     <input 
                         className='form-control'
                         type='text'
-                        placeholder='Name*'
+                        placeholder='Name'
                         name='name'
                         value={name}
                         onChange={e => onChange(e)}
@@ -79,10 +51,34 @@ const Signup = ({ signup, isAuthenticated }) => {
                     />
                 </div>
                 <div className='form-group'>
+                    <input
+                        className='form-control'
+                        type='text'
+                        placeholder='Surname'
+                        name='surname'
+                        value={surname}
+                        onChange={e => onChange(e)}
+                        required
+                    />
+                </div>
+                <div className='form-group'>
+                    <input
+                        className='form-control'
+                        type='number'
+                        placeholder='Pesel'
+                        min='10000000000'
+                        max='99999999999'
+                        name='pesel'
+                        value={pesel}
+                        onChange={e => onChange(e)}
+                        required
+                    />
+                </div>
+                <div className='form-group'>
                     <input 
                         className='form-control'
                         type='email'
-                        placeholder='Email*'
+                        placeholder='Email'
                         name='email'
                         value={email}
                         onChange={e => onChange(e)}
@@ -92,8 +88,19 @@ const Signup = ({ signup, isAuthenticated }) => {
                 <div className='form-group'>
                     <input
                         className='form-control'
+                        type='tel'
+                        placeholder='Phone number'
+                        name='phone_number'
+                        value={phone_number}
+                        onChange={e => onChange(e)}
+                        required
+                    />
+                </div>
+                <div className='form-group'>
+                    <input
+                        className='form-control'
                         type='password'
-                        placeholder='Password*'
+                        placeholder='Password'
                         name='password'
                         value={password}
                         onChange={e => onChange(e)}
@@ -105,7 +112,7 @@ const Signup = ({ signup, isAuthenticated }) => {
                     <input
                         className='form-control'
                         type='password'
-                        placeholder='Confirm Password*'
+                        placeholder='Confirm Password'
                         name='re_password'
                         value={re_password}
                         onChange={e => onChange(e)}
@@ -113,12 +120,14 @@ const Signup = ({ signup, isAuthenticated }) => {
                         required
                     />
                 </div>
-                <button className='btn btn-primary' type='submit' onClick={() => onSave()}>Register</button>
-                <button className='btn btn-primary' type='submit' onClick={() => onConfirm()}>Confirm</button>
+                <div>
+                    <input
+                        className='btn btn-primary'
+                        type='submit'
+                        value="Register"
+                    />
+                </div>
             </form>
-            <p className='mt-3'>
-                Already have an account? <Link to='/login'>Sign In</Link>
-            </p>
         </div>
     );
 
@@ -126,6 +135,6 @@ const Signup = ({ signup, isAuthenticated }) => {
 
 const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated
-})
+});
 
 export default connect(mapStateToProps, { signup })(Signup);
