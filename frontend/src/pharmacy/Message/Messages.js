@@ -104,7 +104,7 @@ class Messages extends Component {
 
     render() {
         return (
-            <main className="content">
+            <>
                 <h1>Orders which has been made</h1>
                 <div>
                     <h3>New messages</h3>
@@ -122,7 +122,7 @@ class Messages extends Component {
                         {this.renderReadMessages()}
                     </ul>
                 </div>
-            </main>
+            </>
         );
     }
 }

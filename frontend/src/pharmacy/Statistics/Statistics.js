@@ -69,7 +69,7 @@ class Statistics extends Component {
 
     render() {
         return (
-            <main className="content">
+            <>
                 <CRow>
                     <CCol xs="12" sm="6" lg="3">
                         <CWidgetIcon text="liczba klientów" header={this.state.customersNumber} color="primary" iconPadding={false}>
@@ -93,7 +93,7 @@ class Statistics extends Component {
 
                     </CCol>
                 </CRow>
-            </main>
+            </>
         );
     }
 

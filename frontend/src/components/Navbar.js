@@ -5,8 +5,16 @@ import { logout } from '../actions/auth';
 import Badge from '@material-ui/core/Badge';
 import InboxIcon from '@material-ui/icons/Inbox';
 import axios from "axios";
-
-
+import {
+    CHeader,
+    CToggler,
+    CHeaderBrand,
+    CHeaderNav,
+    CHeaderNavItem,
+    CHeaderNavLink,
+    CBreadcrumbRouter,
+    CLink
+} from '@coreui/react'
 
 
 class Navbar extends Component {
@@ -35,11 +43,14 @@ class Navbar extends Component {
             )
             .catch(err => console.log(err));
     }
+
     componentDidMount() {
-        this.getUnreadMessagesCount();
-        this.interval = setInterval(() => {
+        if (this.props.isAuthenticated){
             this.getUnreadMessagesCount();
-        }, 60000);
+            this.interval = setInterval(() => {
+                this.getUnreadMessagesCount();
+            }, 60000);
+        }
     }
 
     componentWillUnmount() {
@@ -49,37 +60,16 @@ class Navbar extends Component {
     renderAuthLinks = () => {
         return(
             <Fragment>
-                <li className="nav-item">
-                    <a className='nav-link' onClick={this.props.logout} href='/'>Logout</a>
-                </li>
-                <li className="nav-item">
-                    <a className='nav-link' href='/customers'>Customers</a>
-                </li>
-                <li className="nav-item">
-                    <a className='nav-link' href='/medicines'>Medicines</a>
-                </li>
-                <li className="nav-item">
-                    <a className='nav-link' href='/searchMedicines'>Search Medicines</a>
-                </li>
-                <li className="nav-item">
-                    <a className='nav-link' href='/medicineOrders'>Medicine Orders</a>
-                </li>
-                <li className="nav-item">
-                    <a className='nav-link' href='/newMedicineOrder'>New Order</a>
-                </li>
-                <li className="nav-item">
-                    <a className='nav-link' href='/categories'>Medicine categories</a>
-                </li>
-                <li className="nav-item">
-                    <a className='nav-link' href='/statistics'>Statistics</a>
-                </li>
-                <li className="nav-item">
-                    <a className='nav-link' href='/newOrderMessages'>
+                <CHeaderNavItem  className="px-3">
+                    <CHeaderNavLink to="/newOrderMessages">
                         <Badge badgeContent={this.state.unreadMessagesCount} color="primary">
                             <InboxIcon />
                         </Badge>
-                    </a>
-                </li>
+                    </CHeaderNavLink>
+                </CHeaderNavItem>
+                <CHeaderNavItem className="px-3" >
+                    <CHeaderNavLink to="/" onClick={this.props.logout}>Logout</CHeaderNavLink>
+                </CHeaderNavItem>
             </Fragment>
         )
     };
@@ -87,43 +77,26 @@ class Navbar extends Component {
     renderGuestsLinks = () => {
         return(
             <Fragment>
-                <li className="nav-item">
-                    <NavLink className="nav-link" exact to='/login'>Login</NavLink>
-                </li>
-                <li className="nav-item">
-                    <NavLink className="nav-link" exact to='/signup'>Sign Up</NavLink>
-                </li>
+                <CHeaderNavItem  className="px-3">
+                    <CHeaderNavLink to="/signup">Sign up</CHeaderNavLink>
+                </CHeaderNavItem>
+                <CHeaderNavItem className="px-3" >
+                    <CHeaderNavLink to="/login">Login</CHeaderNavLink>
+                </CHeaderNavItem>
             </Fragment>
         )
     };
 
     render () {
         return(
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <Link className="navbar-brand" to='/'>Auth System</Link>
-                <button
-                    className="navbar-toggler"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#navbarNav"
-                    aria-controls="navbarNav"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                >
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbarNav">
-                    <ul className="navbar-nav">
-                        <li className="nav-item">
-                            <NavLink className="nav-link" exact to='/'>Home</NavLink>
-                        </li>
-                        { <Fragment>{ this.props.isAuthenticated ?
-                            this.renderAuthLinks() :
-                            this.renderGuestsLinks()
-                        }</Fragment> }
-                    </ul>
-                </div>
-            </nav>
+            <CHeader>
+                <CHeaderNav className="d-md-down-none ml-auto">
+                    { this.props.isAuthenticated ?
+                        this.renderAuthLinks() :
+                        this.renderGuestsLinks()
+                    }
+                </CHeaderNav>
+            </CHeader>
         )
     }
 }

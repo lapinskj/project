@@ -50,7 +50,7 @@ class SearchMedicines extends Component {
 
     render() {
         return (
-            <main className="content">
+            <>
                 <Form>
                     <FormGroup>
                         <Label for="name">Search medicine</Label>
@@ -69,7 +69,7 @@ class SearchMedicines extends Component {
                     <h6>Results:</h6>
                     {this.renderMedicines()}
                 </div>
-            </main>
+            </>
         );
     }
 

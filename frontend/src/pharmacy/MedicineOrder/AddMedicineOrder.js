@@ -148,7 +148,7 @@ class AddMedicineOrder extends Component {
     render () {
         let orderItems = this.state.orderItems;
         return (
-            <div>
+            <>
                 <h3>
                     Dodaj nowe zamówienie
                 </h3>
@@ -248,7 +248,7 @@ class AddMedicineOrder extends Component {
                 <Button onClick={this.onMedicineOrderSubmit}>
                     Submit
                 </Button>
-            </div>
+            </>
         );
     }
 

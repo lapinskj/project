@@ -125,7 +125,7 @@ class MedicineOrders extends Component {
 
     render() {
         return (
-            <main className="content">
+            <>
                 <h3>
                     Zamówienia
                 </h3>
@@ -140,7 +140,7 @@ class MedicineOrders extends Component {
                         onStatusSave={this.handleStatusSubmit}
                     />
                 ) : null}
-            </main>
+            </>
         );
     }
 

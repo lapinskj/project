@@ -93,7 +93,7 @@ class Categories extends Component {
 
     render() {
         return (
-            <main className="content">
+            <>
                 <div>
                     <button onClick={this.createItem} className="btn btn-secondary">
                         Add category
@@ -109,7 +109,7 @@ class Categories extends Component {
                         />
                     ) : null}
                 </div>
-            </main>
+            </>
         );
     }
 

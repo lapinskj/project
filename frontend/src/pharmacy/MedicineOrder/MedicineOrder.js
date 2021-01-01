@@ -222,12 +222,12 @@ class MedicineOrder extends Component {
 
     render () {
         return (
-            <div>
+            <>
                 { this.state.medicineOrder ?
                     this.renderOrder()
                     : null
                 }
-            </div>
+            </>
         );
     }
 

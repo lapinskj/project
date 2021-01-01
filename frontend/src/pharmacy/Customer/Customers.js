@@ -92,7 +92,7 @@ class Customers extends Component {
 
     render() {
         return (
-            <main className="content">
+            <>
                 <button onClick={this.createItem} className="btn btn-secondary">
                     Add customer
                 </button>
@@ -106,7 +106,7 @@ class Customers extends Component {
                         onSave={this.handleSubmit}
                     />
                 ) : null}
-            </main>
+            </>
         );
     }
 

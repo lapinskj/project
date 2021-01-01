@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import EditMedicineModal from "./EditMedicineModal";
 import axios from "axios";
-
+import {CImg} from '@coreui/react'
 
 class Medicines extends Component {
 
@@ -83,7 +83,10 @@ class Medicines extends Component {
                     <h6>
                         {item.name} {item.dose} {item.capacity} {item.brand} {item.price} {item.quantity}
                         <div>
-                            <img class="w-25 h-25" src={item.image}/>
+                            <CImg
+                                src={item.image}
+                                height={100}
+                            />
                         </div>
                     </h6>
                     <ul>
@@ -105,7 +108,7 @@ class Medicines extends Component {
 
     render() {
         return (
-            <main className="content">
+            <>
                 <div>
                     <button onClick={this.createItem} className="btn btn-secondary">
                         Add medicine
@@ -121,7 +124,7 @@ class Medicines extends Component {
                         onSave={this.handleSubmit}
                     />
                 ) : null}
-            </main>
+            </>
         );
     }
 
