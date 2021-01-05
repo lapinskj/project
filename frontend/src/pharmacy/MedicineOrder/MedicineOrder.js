@@ -2,6 +2,22 @@ import React, { Component } from "react";
 import axios from "axios";
 import UpdateOrderStatusModal from "./UpdateOrderStatusModal";
 import {Button, Input, Label} from "reactstrap";
+import {
+    CBadge,
+    CButton,
+    CCard,
+    CCardBody,
+    CCardHeader,
+    CDataTable,
+    CCollapse,
+    CImg,
+    CRow,
+    CCol,
+    CFormGroup, CLabel, CInputGroup, CInputGroupPrepend, CInput, CSelect, CListGroupItem, CCardFooter
+} from "@coreui/react";
+import returnConfig from "../returnConfig";
+import DeleteIcon from "@material-ui/icons/Delete";
+import SearchIcon from "@material-ui/icons/Search";
 
 class MedicineOrder extends Component {
     constructor(props) {
@@ -28,13 +44,7 @@ class MedicineOrder extends Component {
 
     handleStatusSubmit = item => {
         this.toggle();
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .put(`http://localhost:8000/medicineOrders/${item.id}/updateStatus/`, item, config)
             .then(res => this.getMedicineOrder());
@@ -86,13 +96,7 @@ class MedicineOrder extends Component {
 
     getMedicineOrder () {
         let id = this.props.match.params.id;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .get(`http://localhost:8000/medicineOrders/${id}/`, config)
             .then(res => this.setState({medicineOrder: res.data}))
@@ -109,7 +113,7 @@ class MedicineOrder extends Component {
         const medicinesList = this.state.medicinesList;
         return medicinesList.map(medicine => (
             <option value={medicine.id}>
-                {medicine.id} {medicine.name} {medicine.dose} {medicine.capacity} {medicine.brand} {medicine.price}
+                {medicine.name} {medicine.brand} {medicine.dose} {medicine.capacity} {medicine.price} PLN {medicine.quantity}
             </option>
         ));
     };
@@ -134,13 +138,7 @@ class MedicineOrder extends Component {
 
     componentDidMount() {
         this.getMedicineOrder();
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .options("http://localhost:8000/medicineOrders/", config)
             .then(res => this.setState({updateChoices: res.data.actions['POST']['orderStatus'].choices}));
@@ -149,65 +147,165 @@ class MedicineOrder extends Component {
     renderOrder = () => {
         const medicineOrder = this.state.medicineOrder;
         let orderItem = this.state.orderItem;
+        let orderDetails = orderItem;
+        delete orderDetails.medicineOrderItems;
+        delete orderDetails.customer;
         return (
-            <div>
-                <button onClick={() => this.handleStatusUpdate(medicineOrder)} className="btn btn-light ml-2"> Update status </button>
-                <h3>Zamówienie nr {medicineOrder.id}</h3>
-                <p>
-                    Data: {medicineOrder.created}
-                </p>
-                <p>
-                    Klient: {medicineOrder.customer.pesel} {medicineOrder.customer.name} {medicineOrder.customer.surname}
-                </p>
-                <p>
-                    Kwota: {medicineOrder.total_price}
-                </p>
-                <p>
-                    Status: {medicineOrder.orderStatus}
-                </p>
+            <>
+                <CCard>
+                    <CCardHeader>
+                        <CRow>
+                            <CCol lg="10" className="py-3">
+                                <h3>Order nr {medicineOrder.id}</h3>
+                            </CCol>
+                            <CCol lg="2" className="py-3">
+                                <CButton color="secondary" onClick={() => this.handleStatusUpdate(medicineOrder)} className="btn-brand mr-1 mb-1">
+                                    Update status
+                                </CButton>
+                            </CCol>
+                        </CRow>
+                    </CCardHeader>
+                    <CCardBody>
+                        <table className="table table-striped table-hover">
+                            <tbody>
+                                <tr>
+                                    <td>Data</td>
+                                    <td>{medicineOrder.created}</td>
+                                </tr>
+                                <tr>
+                                    <td>Klient</td>
+                                    <td>{medicineOrder.customer.pesel} {medicineOrder.customer.name} {medicineOrder.customer.surname}</td>
+                                </tr>
+                                <tr>
+                                    <td>Kwota</td>
+                                    <td>{medicineOrder.total_price}</td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td>{medicineOrder.orderStatus}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <CRow>
+                            <CCol lg="1" className="py-3">
+                            </CCol>
+                            <CCol lg="2" className="py-3">
+                                <p className="text-muted">Name</p>
+                            </CCol>
+                            <CCol lg="1" className="py-3">
+                                <p className="text-muted">Brand</p>
+                            </CCol>
+                            <CCol lg="2" className="py-3">
+                                <p className="text-muted">Dose</p>
+                            </CCol>
+                            <CCol lg="2" className="py-3">
+                                <p className="text-muted">Capacity</p>
+                            </CCol>
+                            <CCol lg="1" className="py-3">
+                                <p className="text-muted">Price</p>
+                            </CCol>
+                            <CCol lg="1" className="py-3">
+                                <p className="text-muted">Amount</p>
+                            </CCol>
+                            <CCol lg="1" className="py-3">
+                                <p className="text-muted">Total</p>
+                            </CCol>
+                            <CCol lg="1" className="py-3">
+                                <p className="text-muted">Delete</p>
+                            </CCol>
+                        </CRow>
+                        { medicineOrder.medicineOrderItems.map(orderitem => (
+                            <CRow key={orderitem.id}>
+                                <CCol lg="1" className="py-3">
+                                    <CImg src={orderitem.medicine.image} height={70}/>
+                                </CCol>
+                                <CCol lg="2" className="py-3">
+                                    <p>{orderitem.medicine.name}</p>
+                                </CCol>
+                                <CCol lg="1" className="py-3">
+                                    <p>{orderitem.medicine.brand}</p>
+                                </CCol>
+                                <CCol lg="2" className="py-3">
+                                    <p>{orderitem.medicine.dose}</p>
+                                </CCol>
+                                <CCol lg="2" className="py-3">
+                                    <p>{orderitem.medicine.capacity}</p>
+                                </CCol>
+                                <CCol lg="1" className="py-3">
+                                    <p>{orderitem.medicine.price}</p>
+                                </CCol>
+                                <CCol lg="1" className="py-3">
+                                    <p>{orderitem.amount}</p>
+                                </CCol>
+                                <CCol lg="1" className="py-3">
+                                    <p>{orderitem.amount * orderitem.medicine.price}</p>
+                                </CCol>
+                                <CCol lg="1" className="py-3">
+                                    <CButton color="danger" onClick={() => this.handleDelete(orderitem)} className="btn-brand mr-1 mb-1">
+                                        <DeleteIcon/>
+                                    </CButton>
+                                </CCol>
+                            </CRow>
+                        ))}
+                    </CCardBody>
+                </CCard>
 
-                { medicineOrder.medicineOrderItems.map(orderitem => (
-                    <span key={orderitem.id}>
-                        <p>
-                            -> {orderitem.medicine.name} {orderitem.medicine.dose} {orderitem.medicine.capacity} {orderitem.medicine.brand} {orderitem.medicine.price} x {orderitem.amount}
-                        </p>
-                        <button onClick={() => this.handleDelete(orderitem)} className="btn btn-danger"> Delete </button>
-                    </span>
-
-                ))}
-                <span>
-                    <wbr/>
-                    <h6>Dodaj nowy element zamówienia</h6>
-                    <Button color="primary" onClick={this.onMedicineSearchSubmit}>Search</Button>
-                    <Input
-                        type="text"
-                        name="name"
-                        value={this.state.medicineSearchValue.name}
-                        onChange={this.onMedicineSearchChange}
-                        placeholder="Enter medicine name"
-                    />
-                    <Label for="medicine">Medicine</Label>
-                    <Input
-                        type="select"
-                        name="medicine"
-                        value={orderItem.medicine}
-                        onChange={this.onOrderItemChange}
-                    >
-                        {this.renderMedicines()}
-                    </Input>
-                    <Label for="amount">Amount</Label>
-                    <Input
-                        type="number"
-                        name="amount"
-                        value={orderItem.amount}
-                        onChange={this.onOrderItemChange}
-                        placeholder="Enter medicine amount"
-                    />
-                    <Button onClick={this.onMedicineOrderItemSave}>
-                        Save
-                    </Button>
-                    <abbr/>
-                </span>
+                <CCard>
+                    <CCardHeader>
+                        <h4>Add new order item</h4>
+                    </CCardHeader>
+                    <CCardBody>
+                        <CFormGroup row>
+                            <CLabel htmlFor="pesel" col="lg">Medicine</CLabel>
+                            <CCol md="12">
+                                <CInputGroup>
+                                    <CInputGroupPrepend>
+                                        <CButton type="button" color="primary" onClick={this.onMedicineSearchSubmit}>
+                                            <SearchIcon/> Search
+                                        </CButton>
+                                    </CInputGroupPrepend>
+                                    <CInput
+                                        size="lg"
+                                        id="name"
+                                        type="text"
+                                        name="name"
+                                        value={this.state.medicineSearchValue.name}
+                                        onChange={this.onMedicineSearchChange}
+                                        placeholder="Enter medicine name"
+                                    />
+                                    <CSelect
+                                        className="col-sm-8"
+                                        size="lg"
+                                        name="medicine"
+                                        value={orderItem.medicine}
+                                        onChange={this.onOrderItemChange}
+                                    >
+                                        {this.renderMedicines()}
+                                    </CSelect>
+                                </CInputGroup>
+                            </CCol>
+                        </CFormGroup>
+                        <CFormGroup row>
+                            <CLabel htmlFor="amount" col="lg">Amount</CLabel>
+                            <CCol md="12">
+                                <CInput
+                                    size="lg"
+                                    id="amount"
+                                    type="number"
+                                    name="amount"
+                                    value={orderItem.amount}
+                                    onChange={this.onOrderItemChange}
+                                    placeholder="Enter medicine amount"
+                                />
+                            </CCol>
+                        </CFormGroup>
+                    </CCardBody>
+                    <CCardFooter>
+                        <CButton size="lg" color="primary" onClick={this.onMedicineOrderItemSave}>
+                            Submit
+                        </CButton>
+                    </CCardFooter>
+                </CCard>
                 {this.state.modal ? (
                     <UpdateOrderStatusModal
                         activeItem={this.state.activeItem}
@@ -216,7 +314,7 @@ class MedicineOrder extends Component {
                         onStatusSave={this.handleStatusSubmit}
                     />
                 ) : null}
-            </div>
+            </>
         );
     }
 

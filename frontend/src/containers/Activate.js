@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { verify } from '../actions/auth';
+import {CButton, CCard, CCardBody, CCardHeader, CImg, CRow, CCol} from "@coreui/react";
 
 const Activate = (props) => {
     const [verified, setVerified] = useState(false);
@@ -17,19 +18,21 @@ const Activate = (props) => {
     if (verified)
         return <Redirect to='/' />
     return (
-        <div className='container'>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column',marginTop: '200px' }}>
-                <h1>Verify your Account:</h1>
-                <button 
-                    onClick={verify_account}
-                    style={{ marginTop: '50px' }}
-                    type="button"
-                    className="btn btn-primary"
-                >
-                    Verify
-                </button>
-            </div>
-        </div>
+        <>
+            <CCard>
+                <CCardBody>
+                    <CRow className="justify-content-center">
+                        <h2>To finish registration you need to verify your Account</h2>
+                    </CRow>
+                    <CRow className="justify-content-center">
+                        <p>Please click the button below</p>
+                    </CRow>
+                    <CRow className="justify-content-center">
+                        <CButton type="button" onClick={verify_account} color="primary">Verify</CButton>
+                    </CRow>
+                </CCardBody>
+            </CCard>
+        </>
     );
 };
 

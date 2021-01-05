@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Form,
-    FormGroup,
-    Input,
-    Label
-} from "reactstrap";
+    CButton,
+    CForm,
+    CFormGroup,
+    CLabel,
+    CInput,
+    CModal,
+    CModalHeader,
+    CModalBody,
+    CModalFooter
+} from '@coreui/react'
 
 export default class EditCustomerModal extends Component {
     constructor(props) {
@@ -26,48 +26,53 @@ export default class EditCustomerModal extends Component {
     render() {
         const { toggle, onSave } = this.props;
         return (
-            <Modal isOpen={true} toggle={toggle}>
-                <ModalHeader toggle={toggle}> Customer </ModalHeader>
-                <ModalBody>
-                    <Form>
-                        <FormGroup>
-                            <Label for="name">Name</Label>
-                            <Input
+            <CModal show={true} onClose={toggle}>
+                <CModalHeader closeButton>
+                    <h4>Category edit</h4>
+                </CModalHeader>
+                <CModalBody>
+                    <CForm action="" method="post">
+                        <CFormGroup>
+                            <CLabel htmlFor="name">Name</CLabel>
+                            <CInput
                                 type="text"
+                                id="name"
                                 name="name"
                                 value={this.state.activeItem.name}
                                 onChange={this.handleChange}
-                                placeholder="Enter Customer Name"
+                                placeholder="Enter customer name"
                             />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="surname">Surname</Label>
-                            <Input
+                        </CFormGroup>
+                        <CFormGroup>
+                            <CLabel htmlFor="surname">Surname</CLabel>
+                            <CInput
                                 type="text"
+                                id="surname"
                                 name="surname"
                                 value={this.state.activeItem.surname}
                                 onChange={this.handleChange}
-                                placeholder="Enter Customer Surname"
+                                placeholder="Enter customer surname"
                             />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="pesel">PESEL</Label>
-                            <Input
-                                type="number"
+                        </CFormGroup>
+                        <CFormGroup>
+                            <CLabel htmlFor="pesel">Pesel</CLabel>
+                            <CInput
+                                type="text"
+                                id="pesel"
                                 name="pesel"
                                 value={this.state.activeItem.pesel}
                                 onChange={this.handleChange}
-                                placeholder="Enter Customer PESEL"
+                                placeholder="Enter customer pesel"
                             />
-                        </FormGroup>
-                    </Form>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="success" onClick={() => onSave(this.state.activeItem)}>
+                        </CFormGroup>
+                    </CForm>
+                </CModalBody>
+                <CModalFooter>
+                    <CButton size="sm" color="primary" onClick={() => onSave(this.state.activeItem)}>
                         Save
-                    </Button>
-                </ModalFooter>
-            </Modal>
+                    </CButton>
+                </CModalFooter>
+            </CModal>
         );
     }
 }

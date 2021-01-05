@@ -61,7 +61,7 @@ const _nav_user =  [
   },
   {
     _tag: 'CSidebarNavItem',
-    name: 'Contact form',
+    name: 'Contact',
     to: '/',
     icon: <MessageIcon className="c-sidebar-nav-icon"/>,
   },

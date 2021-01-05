@@ -6,11 +6,6 @@ import {Suspense} from "react";
 import { CContainer, CFooter } from '@coreui/react'
 import Sidebar from "../components/Sidebar";
 
-const loading = (
-    <div className="pt-3 text-center">
-        <div className="sk-spinner sk-spinner-pulse"></div>
-    </div>
-);
 
 const Layout = (props) => {
     useEffect(() => {
@@ -27,24 +22,22 @@ const Layout = (props) => {
 
     return (
         <div className="c-app c-default-layout">
-            <Sidebar />
+            <Sidebar {...props}/>
             <div className="c-wrapper">
-                <Navbar />
+                <Navbar {...props}/>
                 <div className="c-body">
                     <main className="c-main">
                         <CContainer fluid>
-                            <Suspense fallback={loading}>
                                 {props.children}
-                            </Suspense>
                         </CContainer>
                     </main>
                 </div>
                 <CFooter fixed={false}>
                     <div>
-                        <span className="ml-1">&copy; 2020 Pharmacy App</span>
+                        <span className="ml-1">Politechnika Warszawska</span>
                     </div>
                     <div className="mfs-auto">
-                        <span className="mr-1">Kontakt</span>
+                        <span className="mr-1">Justynan Łapińska 291086</span>
                     </div>
                 </CFooter>
             </div>

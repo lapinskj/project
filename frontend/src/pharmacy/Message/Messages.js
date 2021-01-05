@@ -1,5 +1,13 @@
 import React, {Component} from "react";
 import axios from "axios";
+import {
+    CRow,
+    CCol,
+    CWidgetIcon,
+    CCard,
+    CCardBody,
+    CCardHeader, CJumbotron
+} from '@coreui/react'
 import Divider from '@material-ui/core/Divider';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
@@ -76,7 +84,7 @@ class Messages extends Component {
                 </span>
                 <span>
                     <b>
-                        Message nr {item.id}: new order #{item.medicine_order} at {item.started} {item.unread.toString()}
+                        #{item.id}: Order nr {item.medicine_order} at {item.started}
                     </b>
                 </span>
             </li>
@@ -95,7 +103,7 @@ class Messages extends Component {
                     </button>
                 </span>
                 <span>
-                    Message nr {item.id}: new order #{item.medicine_order} at {item.started} {item.unread.toString()}
+                    #{item.id}: Order nr {item.medicine_order} at {item.started}
                 </span>
             </li>
         ));
@@ -105,23 +113,29 @@ class Messages extends Component {
     render() {
         return (
             <>
-                <h1>Orders which has been made</h1>
-                <div>
-                    <h3>New messages</h3>
-                    <ul>
-                        {this.renderUnreadMessages()}
-                    </ul>
-                </div>
-                <Divider variant="middle" />
-                <div>
-                    <h3>Completed</h3>
-                    <button onClick={() => this.handleDeleteAllRead()} className="btn btn-danger m-2">
-                        <DeleteForeverIcon/> Delete all read messages
-                    </button>
-                    <ul>
-                        {this.renderReadMessages()}
-                    </ul>
-                </div>
+                <CCard>
+                    <CCardHeader>
+                        <h3>New orders reminders</h3>
+                    </CCardHeader>
+                    <CCardBody>
+                        <div>
+                            <ul>
+                                {this.renderUnreadMessages()}
+                            </ul>
+                        </div>
+                        <hr className="my-2" />
+                        <div>
+                            <h5 className="text-muted">Completed</h5>
+                            <button onClick={() => this.handleDeleteAllRead()} className="btn btn-danger m-2">
+                                <DeleteForeverIcon/> Delete all read messages
+                            </button>
+                            <ul className="text-muted">
+                                {this.renderReadMessages()}
+                            </ul>
+                        </div>
+                    </CCardBody>
+
+                </CCard>
             </>
         );
     }

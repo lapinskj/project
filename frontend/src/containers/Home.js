@@ -1,28 +1,48 @@
 import React from 'react';
 import {connect} from "react-redux";
-import {CImg} from "@coreui/react";
+import {CImg, CJumbotron, CButton, CCard, CCardHeader, CCardBody, CRow, CCol} from "@coreui/react";
 import logo from "../assets/pharmacy_logo.png"
 
 const home = ({ user }) => {
     if (user!==null){
         return (
-            <div className='container'>
-                <div className="jumbotron mt-5">
-                    <h3 className="display-4">Welcome to Pharmacy System!</h3>
-                    <hr className="my-4"/>
-                    <p>{user.name}</p>
-                    <CImg
-                        src={logo}
-                        className="c-sidebar-brand-minimized"
-                        height={35}
-                    />
-                </div>
-            </div>
+            <CCard>
+                <CCardBody>
+                    <CRow>
+                        <CCol md="4">
+                            <CImg src={logo} className="mw-100" fluid/>
+                        </CCol>
+                        <CCol md="8">
+                            <CJumbotron className="border">
+                                <h3 className="display-3">Welcome back to Pharmacy System</h3>
+                                <hr className="my-2" />
+                                <p className="lead">You are logged in as {user.name} {user.surname}</p>
+                            </CJumbotron>
+                        </CCol>
+                    </CRow>
+                </CCardBody>
+            </CCard>
         );
+    } else {
+        return (
+            <CCard>
+                <CCardBody>
+                    <CRow>
+                        <CCol md="4">
+                            <CImg src={logo} className="mw-100" fluid/>
+                        </CCol>
+                        <CCol md="8">
+                            <CJumbotron className="border">
+                                <h3 className="display-3">Welcome to Pharmacy System</h3>
+                                <hr className="my-2" />
+                                <p className="lead">Please log in or sign up</p>
+                            </CJumbotron>
+                        </CCol>
+                    </CRow>
+                </CCardBody>
+            </CCard>
+        )
     }
-    return null;
-
-
 };
 
 const mapStateToProps = state => ({

@@ -8,7 +8,13 @@ User = get_user_model()
 class UserCreateSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         model = User
-        fields = ('id', 'email', 'name', 'password', 'is_staff')
+        fields = ('id', 'email', 'name', 'surname', 'phone_number', 'pesel', 'password', 'is_staff')
+
+
+class UserMeSerializer(UserSerializer):
+    class Meta(UserCreateSerializer.Meta):
+        model = User
+        fields = ('id', 'email', 'name', 'surname', 'phone_number', 'pesel', 'is_staff')
 
 
 class CustomerSerializer(serializers.ModelSerializer):
@@ -29,12 +35,6 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MedicineSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Medicine
-        fields = '__all__'
-
-
 class NewOrderMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewOrderMessage
@@ -43,7 +43,7 @@ class NewOrderMessageSerializer(serializers.ModelSerializer):
 
 # GET serializers
 class MedicineListSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=True)
+    category = CategorySerializer()
     image = serializers.ImageField()
 
     class Meta:
@@ -77,6 +77,12 @@ class MedicineOrderSerializerList(serializers.ModelSerializer):
 
 
 # POST / PUT serializers
+class MedicineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Medicine
+        fields = '__all__'
+
+
 class MedicineOrderItemCreateSerializerFull(serializers.ModelSerializer):
     class Meta:
         model = MedicineOrderItem

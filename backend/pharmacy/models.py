@@ -96,7 +96,7 @@ class MedicineOrder(models.Model):
     created = models.DateField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created']
+        ordering = ['-created', '-id']
 
     def __str__(self):
         return f'({self.id} {self.created}) {self.customer} {self.total_price}'
@@ -121,12 +121,12 @@ def get_image_path(instance, filename):
 class Medicine(models.Model):
     name = models.CharField(max_length=25)
     price = models.DecimalField(max_digits=5, decimal_places=2)
-    quantity = models.PositiveIntegerField(default=10)
+    quantity = models.PositiveIntegerField(default=0)
     brand = models.CharField(max_length=30)
     capacity = models.CharField(max_length=30)
     dose = models.CharField(max_length=30)
     image = models.ImageField(upload_to=get_image_path, blank=True, null=True)
-    category = models.ManyToManyField(Category, related_name='medicines')
+    category = models.ForeignKey(Category, related_name='medicines', on_delete=models.SET_DEFAULT, default=1)
 
     def save(self, *args, **kwargs):
         if self.id is None:

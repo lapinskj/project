@@ -1,5 +1,4 @@
 import React, { Fragment , Component} from 'react';
-import { Link, NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logout } from '../actions/auth';
 import Badge from '@material-ui/core/Badge';
@@ -7,13 +6,9 @@ import InboxIcon from '@material-ui/icons/Inbox';
 import axios from "axios";
 import {
     CHeader,
-    CToggler,
-    CHeaderBrand,
     CHeaderNav,
     CHeaderNavItem,
     CHeaderNavLink,
-    CBreadcrumbRouter,
-    CLink
 } from '@coreui/react'
 
 
@@ -45,12 +40,10 @@ class Navbar extends Component {
     }
 
     componentDidMount() {
-        if (this.props.isAuthenticated){
+        this.getUnreadMessagesCount();
+        this.interval = setInterval(() => {
             this.getUnreadMessagesCount();
-            this.interval = setInterval(() => {
-                this.getUnreadMessagesCount();
-            }, 60000);
-        }
+        }, 60000);
     }
 
     componentWillUnmount() {
@@ -60,13 +53,17 @@ class Navbar extends Component {
     renderAuthLinks = () => {
         return(
             <Fragment>
-                <CHeaderNavItem  className="px-3">
-                    <CHeaderNavLink to="/newOrderMessages">
-                        <Badge badgeContent={this.state.unreadMessagesCount} color="primary">
-                            <InboxIcon />
-                        </Badge>
-                    </CHeaderNavLink>
-                </CHeaderNavItem>
+                {this.props.user.is_staff ?
+                    (
+                        <CHeaderNavItem  className="px-3">
+                            <CHeaderNavLink to="/newOrderMessages">
+                                <Badge badgeContent={this.state.unreadMessagesCount} color="primary">
+                                    <InboxIcon />
+                                </Badge>
+                            </CHeaderNavLink>
+                        </CHeaderNavItem>
+                    ):null
+                }
                 <CHeaderNavItem className="px-3" >
                     <CHeaderNavLink to="/" onClick={this.props.logout}>Logout</CHeaderNavLink>
                 </CHeaderNavItem>
@@ -89,14 +86,25 @@ class Navbar extends Component {
 
     render () {
         return(
-            <CHeader>
-                <CHeaderNav className="d-md-down-none ml-auto">
-                    { this.props.isAuthenticated ?
-                        this.renderAuthLinks() :
-                        this.renderGuestsLinks()
-                    }
-                </CHeaderNav>
-            </CHeader>
+            this.props.user ?
+                (
+                    <CHeader>
+                        <CHeaderNav className="d-md-down-none ml-auto">
+                            { this.props.isAuthenticated ?
+                                this.renderAuthLinks() :
+                                this.renderGuestsLinks()
+                            }
+                        </CHeaderNav>
+                    </CHeader>
+                )
+                :
+                (
+                    <CHeader>
+                        <CHeaderNav className="d-md-down-none ml-auto">
+                            {this.renderGuestsLinks()}
+                        </CHeaderNav>
+                    </CHeader>
+                )
         )
     }
 }
@@ -104,7 +112,8 @@ class Navbar extends Component {
 
 function mapStateToProps(state){
     return {
-        isAuthenticated: state.auth.isAuthenticated
+        isAuthenticated: state.auth.isAuthenticated,
+        user: state.auth.user
     }
 }
 

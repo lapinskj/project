@@ -20,7 +20,7 @@ import nav_logged_out from './_nav_logged_out';
 import logo from "../assets/pharmacy_logo.png"
 
 
-class Sidebar extends  Component{
+class Sidebar extends  Component {
 
     constructor(props) {
         super(props);
@@ -30,40 +30,72 @@ class Sidebar extends  Component{
     }
 
     render() {
-        const is_staff = localStorage.getItem('is_staff');
-        console.log("HVNFJV",is_staff);
-        console.log(localStorage.getItem('is_staff'));
         return (
-            <CSidebar>
-                <CSidebarBrand className="d-md-down-none" to="/">
-                    <CIcon
-                        className="c-sidebar-brand-full"
-                        name="logo-negative"
-                        height={35}
-                    />
-                    <CImg
-                        src={logo}
-                        className="c-sidebar-brand-minimized"
-                        height={35}
-                    />
-                </CSidebarBrand>
-                <CSidebarNav>
+            this.props.user ?
+                (
+                    <CSidebar>
+                        <CSidebarBrand className="d-md-down-none" to="/">
+                            <CIcon
+                                className="c-sidebar-brand-full"
+                                name="logo-negative"
+                                height={35}
+                            />
+                            <CImg
+                                src={logo}
+                                className="c-sidebar-brand-minimized"
+                                height={35}
+                            />
+                        </CSidebarBrand>
+                        <CSidebarNav>
+                            <CCreateElement
+                                items={this.props.isAuthenticated ?
+                                    (this.props.user.is_staff ?
+                                        nav_staff
+                                        : nav_user)
+                                    : nav_logged_out
+                                }
+                                components={{
+                                    CSidebarNavDivider,
+                                    CSidebarNavDropdown,
+                                    CSidebarNavItem,
+                                    CSidebarNavTitle
+                                }}
+                            />
+                        </CSidebarNav>
+                        <CSidebarMinimizer className="c-d-md-down-none"/>
+                    </CSidebar>
+                )
+                :
+                (
+                    <CSidebar>
+                        <CSidebarBrand className="d-md-down-none" to="/">
+                            <CIcon
+                                className="c-sidebar-brand-full"
+                                name="logo-negative"
+                                height={35}
+                            />
+                            <CImg
+                                src={logo}
+                                className="c-sidebar-brand-minimized"
+                                height={35}
+                            />
+                        </CSidebarBrand>
+                        <CSidebarNav>
+                            <CCreateElement
+                                items={nav_logged_out}
+                                components={{
+                                    CSidebarNavDivider,
+                                    CSidebarNavDropdown,
+                                    CSidebarNavItem,
+                                    CSidebarNavTitle
+                                }}
+                            />
+                        </CSidebarNav>
+                        <CSidebarMinimizer className="c-d-md-down-none"/>
+                    </CSidebar>
+                )
 
-                    <CCreateElement
-                        items={this.props.isAuthenticated ?
-                                    nav_staff
-                                : nav_logged_out
-                            }
-                        components={{
-                            CSidebarNavDivider,
-                            CSidebarNavDropdown,
-                            CSidebarNavItem,
-                            CSidebarNavTitle
-                        }}
-                    />
-                </CSidebarNav>
-                <CSidebarMinimizer className="c-d-md-down-none"/>
-            </CSidebar>
+
         )
     }
 
@@ -71,7 +103,8 @@ class Sidebar extends  Component{
 
 function mapStateToProps(state){
     return {
-        isAuthenticated: state.auth.isAuthenticated
+        isAuthenticated: state.auth.isAuthenticated,
+        user: state.auth.user
     }
 }
 

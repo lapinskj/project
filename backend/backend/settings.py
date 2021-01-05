@@ -219,6 +219,7 @@ DJOSER = {
         'user_create': 'pharmacy.serializers.UserCreateSerializer',
         'user': 'pharmacy.serializers.UserCreateSerializer',
         'user_delete': 'djoser.serializers.UserDeleteSerializer',
+        'current_user': 'pharmacy.serializers.UserMeSerializer',
     },
 }
 

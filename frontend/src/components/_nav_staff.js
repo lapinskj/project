@@ -43,7 +43,7 @@ const _nav_staff =  [
   {
     _tag: 'CSidebarNavItem',
     name: 'Add customer',
-    to: '/customers',
+    to: '/addCustomer',
     icon: <PersonAddIcon className="c-sidebar-nav-icon"/>,
   },
   {
@@ -65,7 +65,7 @@ const _nav_staff =  [
   {
     _tag: 'CSidebarNavItem',
     name: 'Add medicine',
-    to: '/medicines',
+    to: '/addMedicine',
     icon: 'cil-plus',
   },
   {
@@ -81,7 +81,7 @@ const _nav_staff =  [
   {
     _tag: 'CSidebarNavItem',
     name: 'Add category',
-    to: '/categories',
+    to: '/addCategory',
     icon: 'cil-plus',
   },
   {

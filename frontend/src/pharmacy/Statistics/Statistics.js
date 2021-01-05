@@ -3,7 +3,10 @@ import axios from "axios";
 import {
     CRow,
     CCol,
-    CWidgetIcon
+    CWidgetIcon,
+    CCard,
+    CCardBody,
+    CCardHeader
 } from '@coreui/react'
 import CIcon from "@coreui/icons-react";
 
@@ -70,29 +73,36 @@ class Statistics extends Component {
     render() {
         return (
             <>
-                <CRow>
-                    <CCol xs="12" sm="6" lg="3">
-                        <CWidgetIcon text="liczba klientów" header={this.state.customersNumber} color="primary" iconPadding={false}>
-                            <CIcon width={24} name="cil-people"/>
-                        </CWidgetIcon>
-                    </CCol>
-                    <CCol xs="12" sm="6" lg="3">
-                        <CWidgetIcon text="liczba zamówień" header={this.state.ordersNumber} color="info" iconPadding={false}>
-                            <CIcon width={24} name="cil-basket"/>
-                        </CWidgetIcon>
-                    </CCol>
-                    <CCol xs="12" sm="6" lg="3">
-                        <CWidgetIcon text="całkowita wartość zamówień" header="$1.999,50" color="warning" iconPadding={false}>
-                            <CIcon width={24} name="cil-dollar"/>
-                        </CWidgetIcon>
-                    </CCol>
-                    <CCol xs="12" sm="6" lg="3">
-                        <CWidgetIcon text="Liczba produktów w sprzedaży" header={this.state.medicinesNumber} color="danger" iconPadding={false}>
-                            <CIcon width={24} name="cil-medical-cross"/>
-                        </CWidgetIcon>
+                <CCard>
+                    <CCardHeader>
+                        <h4>Statistics</h4>
+                    </CCardHeader>
+                    <CCardBody>
+                        <CRow>
+                            <CCol xs="12" sm="6" lg="3">
+                                <CWidgetIcon text="liczba klientów" header={this.state.customersNumber} color="primary" iconPadding={false}>
+                                    <CIcon width={24} name="cil-people"/>
+                                </CWidgetIcon>
+                            </CCol>
+                            <CCol xs="12" sm="6" lg="3">
+                                <CWidgetIcon text="liczba zamówień" header={this.state.ordersNumber} color="info" iconPadding={false}>
+                                    <CIcon width={24} name="cil-basket"/>
+                                </CWidgetIcon>
+                            </CCol>
+                            <CCol xs="12" sm="6" lg="3">
+                                <CWidgetIcon text="całkowita wartość zamówień" header="$1.999,50" color="warning" iconPadding={false}>
+                                    <CIcon width={24} name="cil-dollar"/>
+                                </CWidgetIcon>
+                            </CCol>
+                            <CCol xs="12" sm="6" lg="3">
+                                <CWidgetIcon text="Liczba produktów w sprzedaży" header={this.state.medicinesNumber} color="danger" iconPadding={false}>
+                                    <CIcon width={24} name="cil-medical-cross"/>
+                                </CWidgetIcon>
 
-                    </CCol>
-                </CRow>
+                            </CCol>
+                        </CRow>
+                    </CCardBody>
+                </CCard>
             </>
         );
     }

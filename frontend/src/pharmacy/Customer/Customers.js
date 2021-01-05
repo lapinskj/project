@@ -1,7 +1,11 @@
 import React, {Component, useState} from "react";
 import EditCustomerModal from "./EditCustomerModal";
 import axios from "axios";
-
+import {CButton, CCard, CCardBody, CCardHeader, CDataTable} from "@coreui/react";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
+import customers_fields from "../FormFields/customers";
+import returnConfig from "../returnConfig";
 
 class Customers extends Component {
 
@@ -19,13 +23,7 @@ class Customers extends Component {
     }
 
     refreshList = () => {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .get("http://localhost:8000/customers/", config)
             .then(res => this.setState({ customersList: res.data }))
@@ -38,16 +36,10 @@ class Customers extends Component {
 
     handleSubmit = item => {
         this.toggle();
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig()
         if (item.id) {
             axios
-                .put(`http://localhost:8000/customers/${item.id}/`, item, config)
+                .patch(`http://localhost:8000/customers/${item.id}/`, item, config)
                 .then(res => this.refreshList());
             return;
         }
@@ -56,49 +48,54 @@ class Customers extends Component {
             .then(res => this.refreshList());
     };
     handleDelete = item => {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig()
         axios
             .delete(`http://localhost:8000/customers/${item.id}`, config)
             .then(res => this.refreshList());
     };
-    createItem = () => {
-        const item = { name: "", surname: "", age: null, pesel: null };
-        this.setState({ activeItem: item, modal: !this.state.modal });
-    };
+
     editItem = item => {
         this.setState({ activeItem: item, modal: !this.state.modal });
     };
 
-    renderCustomers = () => {
-        const customersItems = this.state.customersList;
-        return customersItems.map(item => (
-            <li key={item.id}>
-            <span>
-                {item.pesel} {item.name} {item.surname}
-            </span>
-            <span>
-                <button onClick={() => this.editItem(item)} className="btn btn-info ml-2"> Edit </button>
-                <button onClick={() => this.handleDelete(item)} className="btn btn-danger ml-2"> Delete </button>
-            </span>
-            </li>
-        ));
-    };
-
     render() {
+        const customers = this.state.customersList;
         return (
             <>
-                <button onClick={this.createItem} className="btn btn-secondary">
-                    Add customer
-                </button>
-                <ul>
-                    {this.renderCustomers()}
-                </ul>
+                <CCard>
+                    <CCardHeader>
+                        <h3>Customers</h3>
+                    </CCardHeader>
+                    <CCardBody>
+                        <CDataTable
+                            items={customers}
+                            fields={customers_fields}
+                            itemsPerPage={5}
+                            pagination
+                            sorter
+                            columnFilter
+                            scopedSlots = {{
+                                'edit':
+                                    (item)=>(
+                                        <td>
+                                            <CButton color="info" onClick={() => this.editItem(item)} className="btn-brand mr-1 mb-1">
+                                                <EditIcon/>
+                                            </CButton>
+                                        </td>
+                                    ),
+                                'delete':
+                                    (item)=>(
+                                        <td>
+                                            <CButton color="danger" onClick={() => this.handleDelete(item)} className="btn-brand mr-1 mb-1">
+                                                <DeleteIcon/>
+                                            </CButton>
+                                        </td>
+                                    )
+
+                            }}
+                        />
+                    </CCardBody>
+                </CCard>
                 {this.state.modal ? (
                     <EditCustomerModal
                         activeItem={this.state.activeItem}

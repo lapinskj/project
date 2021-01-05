@@ -76,9 +76,10 @@ export const load_user = () => async dispatch => {
         };
         try {
             const res = await axios.get(`http://localhost:8000/auth/users/me/`, config);
+            const user = res.data;
             dispatch ({
                 type: USER_LOADED_SUCCESS,
-                payload: res.data
+                payload: user
             });
         } catch (err) {
             dispatch ({
@@ -123,7 +124,6 @@ export const signup = ({ name, surname, pesel, email,  phone_number, password, r
         }
     };
     const body = JSON.stringify({ name, surname, pesel, email,  phone_number, password, re_password });
-    console.log(body)
     try {
         axios
             .post("http://localhost:8000/auth/users/", body, config)

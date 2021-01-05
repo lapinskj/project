@@ -1,15 +1,15 @@
 import React, { Component } from "react";
 import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Form,
-    FormGroup,
-    Input,
-    Label
-} from "reactstrap";
+    CButton,
+    CForm,
+    CFormGroup,
+    CLabel,
+    CInput,
+    CModal,
+    CModalHeader,
+    CModalBody,
+    CModalFooter
+} from '@coreui/react'
 
 export default class EditCategoryModal extends Component {
     constructor(props) {
@@ -26,38 +26,40 @@ export default class EditCategoryModal extends Component {
     render() {
         const { toggle, onSave } = this.props;
         return (
-            <Modal isOpen={true} toggle={toggle}>
-                <ModalHeader toggle={toggle}> Category </ModalHeader>
-                <ModalBody>
-                    <Form>
-                        <FormGroup>
-                            <Label for="code">Code</Label>
-                            <Input
+            <CModal show={true} onClose={toggle}>
+                <CModalHeader closeButton>
+                    <h4>Category edit</h4>
+                </CModalHeader>
+                <CModalBody>
+                    <CForm action="" method="post">
+                        <CFormGroup>
+                            <CLabel htmlFor="code">Code</CLabel>
+                            <CInput
                                 type="text"
+                                id="code"
                                 name="code"
                                 value={this.state.activeItem.code}
                                 onChange={this.handleChange}
-                                placeholder="Enter category code"
-                            />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="name">Name</Label>
-                            <Input
+                                placeholder="Enter category code"/>
+                        </CFormGroup>
+                        <CFormGroup>
+                            <CLabel htmlFor="name">Name</CLabel>
+                            <CInput
                                 type="text"
+                                id="name"
                                 name="name"
                                 value={this.state.activeItem.name}
                                 onChange={this.handleChange}
-                                placeholder="Enter category name"
-                            />
-                        </FormGroup>
-                    </Form>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="success" onClick={() => onSave(this.state.activeItem)}>
+                                placeholder="Enter category name"/>
+                        </CFormGroup>
+                    </CForm>
+                </CModalBody>
+                <CModalFooter>
+                    <CButton size="sm" color="primary" onClick={() => onSave(this.state.activeItem)}>
                         Save
-                    </Button>
-                </ModalFooter>
-            </Modal>
+                    </CButton>
+                </CModalFooter>
+            </CModal>
         );
     }
 }

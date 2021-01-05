@@ -12,6 +12,22 @@ from .permissions import *
 from django.core.mail import send_mail
 
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        print("bbbb")
+        # Add custom claims
+        token['if_staff'] = user.is_staff
+        # ...
+
+        return token
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
 # Filter class
 class CustomerFilter(filters.FilterSet):
     pesel = filters.NumberFilter(field_name='pesel', lookup_expr='contains')
@@ -23,10 +39,15 @@ class CustomerFilter(filters.FilterSet):
 
 class MedicineFilter(filters.FilterSet):
     name = filters.CharFilter(field_name='name', lookup_expr='contains')
+    price = filters.CharFilter(field_name='price', lookup_expr='contains')
+    quantity = filters.CharFilter(field_name='quantity', lookup_expr='contains')
+    brand = filters.CharFilter(field_name='brand', lookup_expr='contains')
+    capacity = filters.CharFilter(field_name='capacity', lookup_expr='contains')
+    dose = filters.CharFilter(field_name='dose', lookup_expr='contains')
 
     class Meta:
         model = Medicine
-        fields = ['name']
+        fields = ['name', 'price', 'quantity', 'brand', 'capacity', 'dose']
 
 
 # Model viewsets
@@ -252,4 +273,5 @@ class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsStaffOrReadOnly]
+
 

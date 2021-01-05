@@ -1,7 +1,25 @@
 import React, { Component } from "react";
 import axios from "axios";
-import {Button, Form, FormGroup, Input, Label} from "reactstrap";
-
+import {
+    CButton, CCard,
+    CCardBody,
+    CCardFooter,
+    CCardHeader,
+    CForm,
+    CFormGroup,
+    CInput,
+    CLabel,
+    CSelect,
+    CCol,
+    CInputGroup,
+    CInputGroupPrepend,
+    CListGroup,
+    CListGroupItem,
+    CRow, CImg
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import {Redirect} from "react-router-dom";
+import SearchIcon from '@material-ui/icons/Search';
 
 
 class AddMedicineOrder extends Component {
@@ -9,6 +27,7 @@ class AddMedicineOrder extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            redirect: false,
             customer: {
                 id: null,
                 name: "",
@@ -93,7 +112,7 @@ class AddMedicineOrder extends Component {
         const customersList = this.state.customersList;
         return customersList.map(customer => (
             <option value={customer.id}>
-                {customer.id} {customer.name} {customer.surname} {customer.pesel}
+                {customer.name} {customer.surname} {customer.pesel}
             </option>
         ));
     };
@@ -103,11 +122,45 @@ class AddMedicineOrder extends Component {
         if (medicinesList) {
             return medicinesList.map(medicineItem => (
                 <option value={medicineItem.id}>
-                    {medicineItem.id} {medicineItem.name} {medicineItem.dose} {medicineItem.capacity} {medicineItem.brand} {medicineItem.price}
+                    {medicineItem.name} {medicineItem.brand} {medicineItem.dose} {medicineItem.capacity} {medicineItem.price} PLN {medicineItem.quantity}
                 </option>
             ));
         }
     };
+
+    renderMedicine = (idx) => {
+        let orderItem = this.state.orderItems[idx];
+        let medicinesList = this.state.medicinesList;
+        let medicines = medicinesList[idx].filter(med => {
+                return med.id == orderItem.medicine}
+            );
+        let medicine = medicines[0];
+        return(
+            <CRow id={idx}>
+                <CCol lg="2" className="py-3">
+                    <CImg src={medicine.image} height={70}/>
+                </CCol>
+                <CCol lg="2" className="py-3">
+                    <p>{medicine.name}</p>
+                </CCol>
+                <CCol lg="2" className="py-3">
+                    <p>{medicine.brand}</p>
+                </CCol>
+                <CCol lg="2" className="py-3">
+                    <p>{medicine.dose}</p>
+                </CCol>
+                <CCol lg="2" className="py-3">
+                    <p>{medicine.capacity}</p>
+                </CCol>
+                <CCol lg="1" className="py-3">
+                    <p>{medicine.price}</p>
+                </CCol>
+                <CCol lg="1" className="py-3">
+                    <p>{medicine.quantity}</p>
+                </CCol>
+            </CRow>
+        )
+    }
 
     addOrderItem = (e) => {
         this.setState((prevState) => ({
@@ -127,7 +180,7 @@ class AddMedicineOrder extends Component {
         };
         axios
             .post("http://localhost:8000/medicineOrders/", newOrder, config)
-            .then(res => console.log(res))
+            .then(() => this.setState({ redirect: true }))
             .catch(err => console.log(err));
     };
 
@@ -146,108 +199,132 @@ class AddMedicineOrder extends Component {
     };
 
     render () {
+        const { redirect } = this.state;
+        if (redirect) {
+            return <Redirect to='/medicineOrders'/>;
+        }
         let orderItems = this.state.orderItems;
         return (
             <>
-                <h3>
-                    Dodaj nowe zamówienie
-                </h3>
-                <span>
-                    <Form>
-                        <FormGroup>
-                            <Label for="pesel">Search customer by pesel</Label>
-                            <Button color="primary" onClick={this.onCustomerSearchSubmit}>Search</Button>
-                            <Input
-                                type="text"
-                                name="pesel"
-                                value={this.state.customerSearchValue.pesel}
-                                onChange={this.onCustomerSearchChange}
-                                placeholder="Enter pesel"
-                            />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="customer">Customer</Label>
-                            <Input
-                                type="select"
-                                name="customer"
-                                value={this.state.activeCustomer}
-                                onChange={this.onCustomerChange}
-                            >
-                                {this.renderCustomers()}
-                            </Input>
-                        </FormGroup>
-                        <wbr/>
-                        <div>
-                           <Button onClick={this.addOrderItem}>
-                                Add another medicine
-                            </Button>
-                        </div>
-                        <abbr/>
-                        <FormGroup>
-                            {
-                                orderItems.map( (val, idx) => {
-                                    let buttonId = `button${idx}`, medicineSearchId = `medicineSearch${idx}`, medicineId = `medicine${idx}`, amountId = `amount${idx}`;
-                                    return (
-                                        <div key={idx}>
-                                            <abbr/>
-                                            <Label>{`Order item #${idx + 1}`}</Label>
-                                            <Button color="primary" id = {buttonId} onClick={this.onMedicineSearchSubmit}>Search</Button>
-                                            <Input
-                                                type="text"
-                                                name="medicineSearch"
-                                                data-id={idx}
-                                                id={medicineSearchId}
-                                                value={this.state.medicineSearchValues[idx]}
-                                                onChange={this.onMedicineSearchChange}
-                                                placeholder="Enter medicine name"
-                                            />
-                                            <br/>
-                                            <Label for={medicineId}>Medicine</Label>
-                                            <Input
-                                                type="select"
-                                                name="medicine"
-                                                data-id={idx}
-                                                id={medicineId}
-                                                value={orderItems[idx].medicine}
-                                                onChange={this.onOrderItemChange}
-                                            >
-                                                {this.renderMedicines(idx)}
-                                            </Input>
-                                            <Label for={amountId}>Amount</Label>
-                                            <Input
-                                                type="text"
-                                                name="amount"
-                                                data-id={idx}
-                                                id={amountId}
-                                                value={orderItems[idx].amount}
-                                                onChange={this.onOrderItemChange}
-                                                placeholder="Enter medicine amount"
-                                            />
-                                            <abbr/>
-                                        </div>
-                                    )
-                                })
-                            }
-                        </FormGroup>
-                    </Form>
-                </span>
-                <wbr/>
-                <span>
-                    <h4>
-                        Podsumowanie
-                    </h4>
-                    <p>
-                        Customer: {this.state.activeCustomer ? this.state.activeCustomer : null}
-                    </p>
-                    {orderItems.map((item) => {
-                        return(
-                            <p>Nazwa: {item.medicine} Ilość: {item.amount}</p>
-                        )
-                    })}
-                </span>
-                <Button onClick={this.onMedicineOrderSubmit}>
-                    Submit
-                </Button>
+                <CCard>
+                    <CCardHeader>
+                        <h3>Create new order</h3>
+                    </CCardHeader>
+                    <CCardBody>
+                        <CForm action="" method="post">
+                            <CFormGroup row>
+                                <CLabel htmlFor="pesel" col="lg">Customer</CLabel>
+                                <CCol md="12">
+                                    <CInputGroup>
+                                        <CInputGroupPrepend>
+                                            <CButton type="button" color="primary" onClick={this.onCustomerSearchSubmit}>
+                                                <SearchIcon/> Search
+                                            </CButton>
+                                        </CInputGroupPrepend>
+                                        <CInput
+                                            size="lg"
+                                            id="pesel"
+                                            type="text"
+                                            name="pesel"
+                                            value={this.state.customerSearchValue.pesel}
+                                            onChange={this.onCustomerSearchChange}
+                                            placeholder="Search customer by pesel"
+                                        />
+                                        <CSelect
+                                            size="lg"
+                                            id="customer"
+                                            name="customer"
+                                            value={this.state.activeCustomer}
+                                            onChange={this.onCustomerChange}
+                                        >
+                                            {this.renderCustomers()}
+                                        </CSelect>
+                                    </CInputGroup>
+                                </CCol>
+                            </CFormGroup>
+
+                            <CRow>
+                                <CCol md="9">
+                                    <CLabel col="lg">Order items</CLabel>
+                                </CCol>
+                                <CCol md="3">
+                                    <CButton type="button" color="secondary" onClick={this.addOrderItem}>
+                                        <CIcon name="cil-plus"/> Add another medicine
+                                    </CButton>
+                                </CCol>
+                            </CRow>
+                            <CListGroup>
+                                {
+                                    orderItems.map( (val, idx) => {
+                                        let buttonId = `button${idx}`, medicineSearchId = `medicineSearch${idx}`, medicineId = `medicine${idx}`, amountId = `amount${idx}`;
+                                        return (
+                                            <CListGroupItem key={idx}>
+
+                                                <CFormGroup row>
+                                                    <CLabel htmlFor="pesel" col="lg">Medicine</CLabel>
+                                                    <CCol md="12">
+                                                        <CInputGroup>
+                                                            <CInputGroupPrepend>
+                                                                <CButton type="button" color="primary" id={buttonId}
+                                                                         onClick={this.onMedicineSearchSubmit}>
+                                                                    <SearchIcon/> Search
+                                                                </CButton>
+                                                            </CInputGroupPrepend>
+                                                            <CInput
+                                                                size="lg"
+                                                                id={medicineSearchId}
+                                                                type="text"
+                                                                name="medicineSearch"
+                                                                data-id={idx}
+                                                                value={this.state.medicineSearchValues[idx]}
+                                                                onChange={this.onMedicineSearchChange}
+                                                                placeholder="Enter medicine name"
+                                                            />
+                                                            <CSelect
+                                                                size="lg"
+                                                                id={medicineId}
+                                                                type="select"
+                                                                name="medicine"
+                                                                data-id={idx}
+                                                                value={orderItems[idx].medicine}
+                                                                onChange={this.onOrderItemChange}
+                                                            >
+                                                                {this.renderMedicines(idx)}
+                                                            </CSelect>
+                                                        </CInputGroup>
+                                                    </CCol>
+                                                </CFormGroup>
+                                                <CFormGroup row>
+                                                    <CLabel htmlFor={amountId} col="lg">Amount</CLabel>
+                                                    <CCol md="12">
+                                                        <CInput
+                                                            size="lg"
+                                                            id={amountId}
+                                                            type="text"
+                                                            name="amount"
+                                                            data-id={idx}
+                                                            value={orderItems[idx].amount}
+                                                            onChange={this.onOrderItemChange}
+                                                            placeholder="Enter medicine amount"
+                                                        />
+                                                    </CCol>
+                                                </CFormGroup>
+
+                                                {orderItems[idx].medicine ?
+                                                    (this.renderMedicine(idx))  : null}
+
+                                            </CListGroupItem>)
+                                    })
+                                }
+                            </CListGroup>
+                        </CForm>
+                    </CCardBody>
+                    <CCardFooter>
+                        <CButton size="lg" color="primary" onClick={this.onMedicineOrderSubmit}>
+                            Submit
+                        </CButton>
+                    </CCardFooter>
+                </CCard>
             </>
         );
     }

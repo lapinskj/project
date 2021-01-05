@@ -19,6 +19,9 @@ import Categories from "./pharmacy/Category/Categories";
 import { Provider } from 'react-redux';
 import store from './store';
 import Layout from './hocs/Layout';
+import AddCustomer from "./pharmacy/Customer/AddCustomer";
+import AddMedicine from "./pharmacy/Medicine/AddMedicine";
+import AddCategory from "./pharmacy/Category/AddCategory";
 
 const App = () => (
 
@@ -36,8 +39,14 @@ const App = () => (
                         <Route exact path="/customers">
                             <Customers/>
                         </Route>
+                        <Route exact path="/addCustomer">
+                            <AddCustomer/>
+                        </Route>
                         <Route exact path="/medicines">
                             <Medicines/>
+                        </Route>
+                        <Route exact path="/addMedicine">
+                            <AddMedicine/>
                         </Route>
                         <Route exact path="/searchMedicines">
                             <SearchMedicines/>
@@ -54,6 +63,9 @@ const App = () => (
                         </Route>
                         <Route exact path="/categories">
                             <Categories/>
+                        </Route>
+                        <Route exact path="/addCategory">
+                            <AddCategory/>
                         </Route>
                         <Route exact path="/statistics">
                             <Statistics/>

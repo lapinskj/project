@@ -1,16 +1,18 @@
 import React, { Component } from "react";
 import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Form,
-    FormGroup,
-    Input,
-    Label
-} from "reactstrap";
+    CButton,
+    CForm,
+    CFormGroup,
+    CLabel,
+    CInput,
+    CModal,
+    CModalHeader,
+    CModalBody,
+    CModalFooter,
+    CSelect
+} from '@coreui/react'
 import axios from "axios";
+import returnConfig from "../returnConfig";
 
 export default class EditMedicineModal extends Component {
     constructor(props) {
@@ -21,135 +23,123 @@ export default class EditMedicineModal extends Component {
             categories: []
         };
     }
+
     handleChange = e => {
         let { name, value } = e.target;
         const activeItem = { ...this.state.activeItem, [name]: value };
         this.setState({ activeItem });
     };
 
-    handleCategoriesChange = event => {
-        let opts = [], opt;
-        for (let i = 0, len = event.target.options.length; i < len; i++) {
-            opt = event.target.options[i];
-            if (opt.selected) {
-                opts.push(opt.value);
-            }
-        }
-        let activeItem = this.state.activeItem;
-        activeItem.category = opts;
-        this.setState({activeItem});
-    };
-
     renderCategories = () => {
         const categoriesList = this.state.categoriesList;
         return categoriesList.map(category => (
             <option value={category.id}>
-                {category.id} {category.code} {category.name}
+                {category.code} {category.name}
             </option>
         ));
     };
 
     componentDidMount() {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .get("http://localhost:8000/categories/", config)
             .then(res => this.setState({categoriesList: res.data}));
-        console.log(this.state.activeItem);
     }
 
     render() {
         const { toggle, onSave } = this.props;
         return (
-            <Modal isOpen={true} toggle={toggle}>
-                <ModalHeader toggle={toggle}> Medicine </ModalHeader>
-                <ModalBody>
-                    <Form>
-                        <FormGroup>
-                            <Label for="name">Name</Label>
-                            <Input
+            <CModal show={true} onClose={toggle}>
+                <CModalHeader closeButton>
+                    <h4>Medicine edit</h4>
+                </CModalHeader>
+                <CModalBody>
+                    <CForm action="" method="post">
+                        <CFormGroup>
+                            <CLabel htmlFor="name">Name</CLabel>
+                            <CInput
                                 type="text"
+                                id="name"
                                 name="name"
                                 value={this.state.activeItem.name}
                                 onChange={this.handleChange}
-                                placeholder="Enter medicine name"
+                                placeholder="Enter name"
                             />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="dose">Dose</Label>
-                            <Input
+                        </CFormGroup>
+                        <CFormGroup>
+                            <CLabel htmlFor="dose">Dose</CLabel>
+                            <CInput
                                 type="text"
+                                id="dose"
                                 name="dose"
                                 value={this.state.activeItem.dose}
                                 onChange={this.handleChange}
                                 placeholder="Enter dose"
                             />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="capacity">Capacity</Label>
-                            <Input
+                        </CFormGroup>
+                        <CFormGroup>
+                            <CLabel htmlFor="capacity">Capacity</CLabel>
+                            <CInput
                                 type="text"
+                                id="capacity"
                                 name="capacity"
                                 value={this.state.activeItem.capacity}
                                 onChange={this.handleChange}
                                 placeholder="Enter capacity"
                             />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="brand">Brand</Label>
-                            <Input
+                        </CFormGroup>
+                        <CFormGroup>
+                            <CLabel htmlFor="brand">Brand</CLabel>
+                            <CInput
                                 type="text"
+                                id="brand"
                                 name="brand"
                                 value={this.state.activeItem.brand}
                                 onChange={this.handleChange}
                                 placeholder="Enter brand"
                             />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="price">Price</Label>
-                            <Input
+                        </CFormGroup>
+                        <CFormGroup>
+                            <CLabel htmlFor="price">Price</CLabel>
+                            <CInput
                                 type="number"
+                                id="price"
                                 name="price"
                                 value={this.state.activeItem.price}
                                 onChange={this.handleChange}
-                                placeholder="Enter medicine price"
+                                placeholder="Enter price"
                             />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="category">Category</Label>
-                            <Input
-                                type="select"
-                                name="category"
-                                value={this.state.activeItem.category}
-                                onChange={this.handleCategoriesChange}
-                                multiple
-                            >
-                                {this.renderCategories()}
-                            </Input>
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="quantity">Quantity</Label>
-                            <Input
+                        </CFormGroup>
+                        <CFormGroup>
+                            <CLabel htmlFor="quantity">Quantity</CLabel>
+                            <CInput
                                 type="number"
+                                id="quantity"
                                 name="quantity"
                                 value={this.state.activeItem.quantity}
                                 onChange={this.handleChange}
-                                placeholder="Enter medicine quantity"
+                                placeholder="Enter quantity"
                             />
-                        </FormGroup>
-                    </Form>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="success" onClick={() => onSave(this.state.activeItem)}>
+                        </CFormGroup>
+                        <CFormGroup>
+                            <CLabel htmlFor="category">Category</CLabel>
+                            <CSelect
+                                name="category"
+                                id="category"
+                                value={this.state.activeItem.category.id}
+                                onChange={this.handleChange}
+                            >
+                                {this.renderCategories()}
+                            </CSelect>
+                        </CFormGroup>
+                    </CForm>
+                </CModalBody>
+                <CModalFooter>
+                    <CButton size="sm" color="primary" onClick={() => onSave(this.state.activeItem)}>
                         Save
-                    </Button>
-                </ModalFooter>
-            </Modal>
-        );
+                    </CButton>
+                </CModalFooter>
+            </CModal>
+        )
     }
 }
