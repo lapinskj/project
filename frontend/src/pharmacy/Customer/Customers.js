@@ -34,7 +34,8 @@ class Customers extends Component {
         this.setState({ modal: !this.state.modal });
     };
 
-    handleSubmit = item => {
+    handleSubmit = (item, e) => {
+        e.preventDefault();
         this.toggle();
         const config = returnConfig()
         if (item.id) {
@@ -70,7 +71,7 @@ class Customers extends Component {
                         <CDataTable
                             items={customers}
                             fields={customers_fields}
-                            itemsPerPage={5}
+                            itemsPerPage={10}
                             pagination
                             sorter
                             columnFilter

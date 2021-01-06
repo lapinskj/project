@@ -40,7 +40,7 @@ class AddMedicineOrder extends Component {
             customerSearchValue: {},
             activeCustomer: null,
             customersList: [],
-            medicinesList: [[{}]]
+            medicinesList: [[]]
         };
         this.onCustomerSearchChange = this.onCustomerSearchChange.bind(this);
         this.onCustomerChange = this.onCustomerChange.bind(this);
@@ -56,6 +56,7 @@ class AddMedicineOrder extends Component {
 
     onCustomerChange = e => {
         let customer = e.target.value;
+        console.log(customer)
         this.setState({activeCustomer: customer});
     };
 
@@ -75,6 +76,7 @@ class AddMedicineOrder extends Component {
                 .then(res => {
                     this.setState({customersList: res.data});
                     this.setState({activeCustomer: res.data[0].id});
+                    console.log(this.state.activeCustomer)
                 })
                 .catch(err => console.log(err));
         }
@@ -101,6 +103,7 @@ class AddMedicineOrder extends Component {
                     this.setState({medicinesList});
                     let orderItems = [...this.state.orderItems];
                     orderItems[id].medicine = res.data[0].id;
+                    console.log(orderItems)
                     this.setState({orderItems});
                 })
                 .catch(err => console.log(err));
@@ -122,7 +125,7 @@ class AddMedicineOrder extends Component {
         if (medicinesList) {
             return medicinesList.map(medicineItem => (
                 <option value={medicineItem.id}>
-                    {medicineItem.name} {medicineItem.brand} {medicineItem.dose} {medicineItem.capacity} {medicineItem.price} PLN {medicineItem.quantity}
+                    {medicineItem.name}, {medicineItem.brand}, {medicineItem.dose}, {medicineItem.capacity}, {medicineItem.price} PLN, ilość: {medicineItem.quantity}
                 </option>
             ));
         }
@@ -160,7 +163,7 @@ class AddMedicineOrder extends Component {
                 </CCol>
             </CRow>
         )
-    }
+    };
 
     addOrderItem = (e) => {
         this.setState((prevState) => ({
@@ -169,6 +172,7 @@ class AddMedicineOrder extends Component {
     };
 
     onMedicineOrderSubmit = (e) => {
+        e.preventDefault();
         let {activeCustomer, orderItems} = this.state;
         let newOrder = {customer: activeCustomer, medicineOrderItems: orderItems};
         const config = {
@@ -189,6 +193,7 @@ class AddMedicineOrder extends Component {
         let item = {...orderItems[e.target.dataset.id]};
         item[e.target.name]= e.target.value;
         orderItems[e.target.dataset.id] = item;
+        console.log(orderItems)
         this.setState( {orderItems});
     };
 
@@ -211,7 +216,7 @@ class AddMedicineOrder extends Component {
                         <h3>Create new order</h3>
                     </CCardHeader>
                     <CCardBody>
-                        <CForm action="" method="post">
+                        <CForm onSubmit={this.onMedicineOrderSubmit} id="newOrderForm">
                             <CFormGroup row>
                                 <CLabel htmlFor="pesel" col="lg">Customer</CLabel>
                                 <CCol md="12">
@@ -236,6 +241,7 @@ class AddMedicineOrder extends Component {
                                             name="customer"
                                             value={this.state.activeCustomer}
                                             onChange={this.onCustomerChange}
+                                            required
                                         >
                                             {this.renderCustomers()}
                                         </CSelect>
@@ -259,7 +265,6 @@ class AddMedicineOrder extends Component {
                                         let buttonId = `button${idx}`, medicineSearchId = `medicineSearch${idx}`, medicineId = `medicine${idx}`, amountId = `amount${idx}`;
                                         return (
                                             <CListGroupItem key={idx}>
-
                                                 <CFormGroup row>
                                                     <CLabel htmlFor="pesel" col="lg">Medicine</CLabel>
                                                     <CCol md="12">
@@ -288,6 +293,7 @@ class AddMedicineOrder extends Component {
                                                                 data-id={idx}
                                                                 value={orderItems[idx].medicine}
                                                                 onChange={this.onOrderItemChange}
+                                                                required
                                                             >
                                                                 {this.renderMedicines(idx)}
                                                             </CSelect>
@@ -300,12 +306,16 @@ class AddMedicineOrder extends Component {
                                                         <CInput
                                                             size="lg"
                                                             id={amountId}
-                                                            type="text"
+                                                            type="number"
                                                             name="amount"
                                                             data-id={idx}
                                                             value={orderItems[idx].amount}
                                                             onChange={this.onOrderItemChange}
                                                             placeholder="Enter medicine amount"
+                                                            min="1"
+                                                            max="50"
+                                                            step="1"
+                                                            required
                                                         />
                                                     </CCol>
                                                 </CFormGroup>
@@ -320,9 +330,7 @@ class AddMedicineOrder extends Component {
                         </CForm>
                     </CCardBody>
                     <CCardFooter>
-                        <CButton size="lg" color="primary" onClick={this.onMedicineOrderSubmit}>
-                            Submit
-                        </CButton>
+                        <CButton type="submit" size="lg" color="primary" form="newOrderForm">Submit</CButton>
                     </CCardFooter>
                 </CCard>
             </>

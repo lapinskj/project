@@ -35,7 +35,8 @@ class AddMedicine extends Component {
             .then(res => this.setState({categoriesList: res.data}));
     }
 
-    handleSubmit = () => {
+    handleSubmit = (e) => {
+        e.preventDefault();
         const config = {
             headers: {
                 'Authorization': `JWT ${localStorage.getItem('access')}`
@@ -57,7 +58,6 @@ class AddMedicine extends Component {
         let { name, value } = e.target;
         const activeItem = { ...this.state.activeItem, [name]: value };
         this.setState({ activeItem });
-        console.log(this.state)
     };
 
     handleFileChange = e => {
@@ -85,7 +85,7 @@ class AddMedicine extends Component {
                     <h3>Add medicine</h3>
                 </CCardHeader>
                 <CCardBody>
-                    <CForm action="" method="post">
+                    <CForm id="addMedicineForm" onSubmit={e => this.handleSubmit(e)}>
                         <CFormGroup>
                             <CLabel htmlFor="name" col="lg">Name</CLabel>
                             <CInput
@@ -97,6 +97,9 @@ class AddMedicine extends Component {
                                 value={this.state.activeItem.name}
                                 onChange={this.handleChange}
                                 placeholder="Enter medicine name"
+                                pattern="[A-Z]{1}[a-z]{1,50}"
+                                title="First letter must be uppercase, 50 maximum characters"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -110,6 +113,7 @@ class AddMedicine extends Component {
                                 value={this.state.activeItem.dose}
                                 onChange={this.handleChange}
                                 placeholder="Enter dose"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -123,6 +127,7 @@ class AddMedicine extends Component {
                                 value={this.state.activeItem.capacity}
                                 onChange={this.handleChange}
                                 placeholder="Enter capacity"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -136,6 +141,9 @@ class AddMedicine extends Component {
                                 value={this.state.activeItem.brand}
                                 onChange={this.handleChange}
                                 placeholder="Enter brand"
+                                pattern="[A-Z]{1}[a-z]{1,50}"
+                                title="First letter must be uppercase, 50 maximum characters"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -149,6 +157,10 @@ class AddMedicine extends Component {
                                 value={this.state.activeItem.price}
                                 onChange={this.handleChange}
                                 placeholder="Enter medicine price"
+                                min="0.01"
+                                step="0.01"
+                                max="9999"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -162,15 +174,20 @@ class AddMedicine extends Component {
                                 value={this.state.activeItem.quantity}
                                 onChange={this.handleChange}
                                 placeholder="Enter medicine quantity"
+                                min="0"
+                                step="1"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
                             <CLabel htmlFor="category" col="lg">Category</CLabel>
-                            <CSelect custom size="lg"
-                                     name="category"
-                                     id="category"
-                                     value={this.state.activeItem.category}
-                                     onChange={this.handleChange}
+                            <CSelect
+                                custom size="lg"
+                                name="category"
+                                id="category"
+                                value={this.state.activeItem.category}
+                                onChange={this.handleChange}
+                                required
                             >
                                 {this.renderCategories()}
                             </CSelect>
@@ -182,14 +199,13 @@ class AddMedicine extends Component {
                                 type="file"
                                 name="image"
                                 onChange={this.handleFileChange}
+                                required
                             />
                         </CFormGroup>
                     </CForm>
                 </CCardBody>
                 <CCardFooter>
-                    <CButton size="lg" color="primary" onClick={this.handleSubmit}>
-                        Submit
-                    </CButton>
+                    <CButton type="submit" form='addMedicineForm' size="lg" color="primary">Submit</CButton>
                 </CCardFooter>
             </CCard>
         )

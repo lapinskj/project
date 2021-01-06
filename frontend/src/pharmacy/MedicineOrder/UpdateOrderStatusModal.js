@@ -34,7 +34,7 @@ export default class UpdateOrderStatusModal extends Component {
                     <h4>Update order status</h4>
                 </CModalHeader>
                 <CModalBody>
-                    <CForm action="" method="post">
+                    <CForm id="updateForm" onSubmit={(e) => onStatusSave(this.state.activeItem, e)}>
                         <CFormGroup>
                             <CLabel htmlFor="orderStatus">New order status</CLabel>
                             <CSelect
@@ -54,9 +54,7 @@ export default class UpdateOrderStatusModal extends Component {
                     </CForm>
                 </CModalBody>
                 <CModalFooter>
-                    <CButton size="sm" color="primary" onClick={() => onStatusSave(this.state.activeItem)}>
-                        Save
-                    </CButton>
+                    <CButton type="submit" size="sm" color="primary" form="updateForm">Save</CButton>
                 </CModalFooter>
             </CModal>
         );

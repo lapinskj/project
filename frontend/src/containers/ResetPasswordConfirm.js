@@ -2,6 +2,19 @@ import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { reset_password_confirm } from '../actions/auth';
+import {
+    CButton,
+    CCard,
+    CCardBody,
+    CCol,
+    CForm,
+    CInput,
+    CInputGroup,
+    CInputGroupPrepend,
+    CInputGroupText,
+    CRow
+} from "@coreui/react";
+import LockIcon from '@material-ui/icons/Lock';
 
 const ResetPasswordConfirm = (props) => {
     const [requestSent, setRequestSent] = useState(false);
@@ -28,35 +41,58 @@ const ResetPasswordConfirm = (props) => {
     if (requestSent)
         return <Redirect to='/' />
     return (
-        <div className='container mt-5'>
-            <form onSubmit={e => onSubmit(e)}>
-                <div className='form-group'>
-                    <input 
-                        className='form-control'
-                        type='password'
-                        placeholder='New Password'
-                        name='new_password'
-                        value={new_password}
-                        onChange={e => onChange(e)}
-                        minLength='6'
-                        required
-                    />
-                </div>
-                <div className='form-group'>
-                    <input
-                        className='form-control'
-                        type='password'
-                        placeholder='Confirm New Password'
-                        name='re_new_password'
-                        value={re_new_password}
-                        onChange={e => onChange(e)}
-                        minLength='6'
-                        required
-                    />
-                </div>
-                <button className='btn btn-primary' type='submit'>Reset Password</button>
-            </form>
-        </div>
+        <>
+            <CRow className="justify-content-center">
+                <CCol md="9" lg="7" xl="6">
+                    <CCard className="mx-4">
+                        <CCardBody className="p-4">
+                            <CForm onSubmit={e => onSubmit(e)}>
+                                <h1>Reset password</h1>
+                                <p className="text-muted">Please enter your new password</p>
+                                <CInputGroup className="mb-3">
+                                    <CInputGroupPrepend>
+                                        <CInputGroupText>
+                                            <LockIcon className="c-icon"/>
+                                        </CInputGroupText>
+                                    </CInputGroupPrepend>
+                                    <CInput
+                                        className='form-control'
+                                        type='password'
+                                        placeholder='New password'
+                                        name='new_password'
+                                        value={new_password}
+                                        onChange={e => onChange(e)}
+                                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                        title="Password must have at least one number and one uppercase and lowercase letter, and be 8 or more characters long"
+                                        required
+                                    />
+                                </CInputGroup>
+                                <CInputGroup className="mb-3">
+                                    <CInputGroupPrepend>
+                                        <CInputGroupText>
+                                            <LockIcon className="c-icon"/>
+                                        </CInputGroupText>
+                                    </CInputGroupPrepend>
+                                    <CInput
+                                        className='form-control'
+                                        type='password'
+                                        placeholder='Repeat new password'
+                                        name='re_new_password'
+                                        value={re_new_password}
+                                        onChange={e => onChange(e)}
+                                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                        title="Password must have at least one number and one uppercase and lowercase letter, and be 8 or more characters long"
+                                        required
+                                    />
+                                </CInputGroup>
+                                <p className="text-muted">Log in after redirecting to home page</p>
+                                <CButton type='submit' color="primary" block>Reset</CButton>
+                            </CForm>
+                        </CCardBody>
+                    </CCard>
+                </CCol>
+            </CRow>
+        </>
     );
 };
 

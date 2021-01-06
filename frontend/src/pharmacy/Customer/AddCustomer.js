@@ -24,7 +24,8 @@ class AddCustomer extends Component {
         };
     }
 
-    handleSubmit = () => {
+    handleSubmit = (e) => {
+        e.preventDefault();
         const config = returnConfig();
         const item = this.state.activeItem;
         axios
@@ -49,7 +50,7 @@ class AddCustomer extends Component {
                     <h3>Add customer</h3>
                 </CCardHeader>
                 <CCardBody>
-                    <CForm action="" method="post">
+                    <CForm id="addCustomerForm" onSubmit={e => this.handleSubmit(e)}>
                         <CFormGroup>
                             <CLabel htmlFor="name" col="lg">Name</CLabel>
                             <CInput
@@ -61,6 +62,9 @@ class AddCustomer extends Component {
                                 value={this.state.activeItem.name}
                                 onChange={this.handleChange}
                                 placeholder="Enter customer name"
+                                pattern="[A-Z]{1}[a-z]{1,20}"
+                                title="First letter must be uppercase, 20 maximum characters"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -74,6 +78,9 @@ class AddCustomer extends Component {
                                 value={this.state.activeItem.surname}
                                 onChange={this.handleChange}
                                 placeholder="Enter customer surname"
+                                pattern="[A-Z]{1}[a-z]{1,40}"
+                                title="First letter must be uppercase, 40 maximum characters"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -81,20 +88,22 @@ class AddCustomer extends Component {
                             <CInput
                                 className="col-sm-6"
                                 size="lg"
-                                type="text"
+                                type="number"
                                 id="pesel"
                                 name="pesel"
                                 value={this.state.activeItem.pesel}
                                 onChange={this.handleChange}
                                 placeholder="Enter customer pesel"
+                                min='10000000000'
+                                max='99999999999'
+                                step="1"
+                                required
                             />
                         </CFormGroup>
                     </CForm>
                 </CCardBody>
                 <CCardFooter>
-                    <CButton size="lg" color="primary" onClick={this.handleSubmit}>
-                        Submit
-                    </CButton>
+                    <CButton type="submit" form="addCustomerForm" size="lg" color="primary">Submit</CButton>
                 </CCardFooter>
             </CCard>
         )

@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from "react-redux";
-import {CImg, CJumbotron, CButton, CCard, CCardHeader, CCardBody, CRow, CCol} from "@coreui/react";
+import {CImg, CJumbotron, CCard, CCardBody, CRow, CCol} from "@coreui/react";
 import logo from "../assets/pharmacy_logo.png"
 
 const home = ({ user }) => {

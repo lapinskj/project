@@ -1,19 +1,15 @@
 import React, { Component } from "react";
 import axios from "axios";
 import UpdateOrderStatusModal from "./UpdateOrderStatusModal";
-import {Button, Input, Label} from "reactstrap";
 import {
-    CBadge,
     CButton,
     CCard,
     CCardBody,
     CCardHeader,
-    CDataTable,
-    CCollapse,
     CImg,
     CRow,
     CCol,
-    CFormGroup, CLabel, CInputGroup, CInputGroupPrepend, CInput, CSelect, CListGroupItem, CCardFooter
+    CFormGroup, CLabel, CInputGroup, CInputGroupPrepend, CInput, CSelect, CForm, CCardFooter
 } from "@coreui/react";
 import returnConfig from "../returnConfig";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -113,12 +109,13 @@ class MedicineOrder extends Component {
         const medicinesList = this.state.medicinesList;
         return medicinesList.map(medicine => (
             <option value={medicine.id}>
-                {medicine.name} {medicine.brand} {medicine.dose} {medicine.capacity} {medicine.price} PLN {medicine.quantity}
+                {medicine.name}, {medicine.brand}, {medicine.dose}, {medicine.capacity}, {medicine.price} PLN, ilość: {medicine.quantity}
             </option>
         ));
     };
 
     onMedicineOrderItemSave = (e) => {
+        e.preventDefault();
         let {orderItem, medicineOrder} = this.state;
         let newOrderItem = {medicineOrder: medicineOrder.id, medicine: orderItem.medicine, amount: orderItem.amount};
         const config = {
@@ -255,55 +252,60 @@ class MedicineOrder extends Component {
                         <h4>Add new order item</h4>
                     </CCardHeader>
                     <CCardBody>
-                        <CFormGroup row>
-                            <CLabel htmlFor="pesel" col="lg">Medicine</CLabel>
-                            <CCol md="12">
-                                <CInputGroup>
-                                    <CInputGroupPrepend>
-                                        <CButton type="button" color="primary" onClick={this.onMedicineSearchSubmit}>
-                                            <SearchIcon/> Search
-                                        </CButton>
-                                    </CInputGroupPrepend>
+                        <CForm id="newOrderItemForm" onSubmit={this.onMedicineOrderItemSave}>
+                            <CFormGroup row>
+                                <CLabel htmlFor="pesel" col="lg">Medicine</CLabel>
+                                <CCol md="12">
+                                    <CInputGroup>
+                                        <CInputGroupPrepend>
+                                            <CButton type="button" color="primary" onClick={this.onMedicineSearchSubmit}>
+                                                <SearchIcon/> Search
+                                            </CButton>
+                                        </CInputGroupPrepend>
+                                        <CInput
+                                            size="lg"
+                                            id="name"
+                                            type="text"
+                                            name="name"
+                                            value={this.state.medicineSearchValue.name}
+                                            onChange={this.onMedicineSearchChange}
+                                            placeholder="Enter medicine name"
+                                        />
+                                        <CSelect
+                                            className="col-sm-8"
+                                            size="lg"
+                                            name="medicine"
+                                            value={orderItem.medicine}
+                                            onChange={this.onOrderItemChange}
+                                            required
+                                        >
+                                            {this.renderMedicines()}
+                                        </CSelect>
+                                    </CInputGroup>
+                                </CCol>
+                            </CFormGroup>
+                            <CFormGroup row>
+                                <CLabel htmlFor="amount" col="lg">Amount</CLabel>
+                                <CCol md="12">
                                     <CInput
                                         size="lg"
-                                        id="name"
-                                        type="text"
-                                        name="name"
-                                        value={this.state.medicineSearchValue.name}
-                                        onChange={this.onMedicineSearchChange}
-                                        placeholder="Enter medicine name"
-                                    />
-                                    <CSelect
-                                        className="col-sm-8"
-                                        size="lg"
-                                        name="medicine"
-                                        value={orderItem.medicine}
+                                        id="amount"
+                                        type="number"
+                                        name="amount"
+                                        value={orderItem.amount}
                                         onChange={this.onOrderItemChange}
-                                    >
-                                        {this.renderMedicines()}
-                                    </CSelect>
-                                </CInputGroup>
-                            </CCol>
-                        </CFormGroup>
-                        <CFormGroup row>
-                            <CLabel htmlFor="amount" col="lg">Amount</CLabel>
-                            <CCol md="12">
-                                <CInput
-                                    size="lg"
-                                    id="amount"
-                                    type="number"
-                                    name="amount"
-                                    value={orderItem.amount}
-                                    onChange={this.onOrderItemChange}
-                                    placeholder="Enter medicine amount"
-                                />
-                            </CCol>
-                        </CFormGroup>
+                                        placeholder="Enter medicine amount"
+                                        min="1"
+                                        max="50"
+                                        step="1"
+                                        required
+                                    />
+                                </CCol>
+                            </CFormGroup>
+                        </CForm>
                     </CCardBody>
                     <CCardFooter>
-                        <CButton size="lg" color="primary" onClick={this.onMedicineOrderItemSave}>
-                            Submit
-                        </CButton>
+                        <CButton type="submit" form="newOrderItemForm" size="lg" color="primary">Submit</CButton>
                     </CCardFooter>
                 </CCard>
                 {this.state.modal ? (

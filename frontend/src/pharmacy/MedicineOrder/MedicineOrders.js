@@ -88,8 +88,8 @@ class MedicineOrders extends Component {
         this.setState({ activeItem: item, modal: !this.state.modal });
     };
 
-    handleStatusSubmit = item => {
-        console.log(item)
+    handleStatusSubmit = (item, e)=> {
+        e.preventDefault();
         this.toggle();
         const config = returnConfig();
         axios

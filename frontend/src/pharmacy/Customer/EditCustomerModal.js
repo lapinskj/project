@@ -31,7 +31,7 @@ export default class EditCustomerModal extends Component {
                     <h4>Category edit</h4>
                 </CModalHeader>
                 <CModalBody>
-                    <CForm action="" method="post">
+                    <CForm id="editCustomerForm" onSubmit={(e) => onSave(this.state.activeItem, e)}>
                         <CFormGroup>
                             <CLabel htmlFor="name">Name</CLabel>
                             <CInput
@@ -41,6 +41,9 @@ export default class EditCustomerModal extends Component {
                                 value={this.state.activeItem.name}
                                 onChange={this.handleChange}
                                 placeholder="Enter customer name"
+                                pattern="[A-Z]{1}[a-z]{1,20}"
+                                title="First letter must be uppercase, 20 maximum characters"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -52,25 +55,30 @@ export default class EditCustomerModal extends Component {
                                 value={this.state.activeItem.surname}
                                 onChange={this.handleChange}
                                 placeholder="Enter customer surname"
+                                pattern="[A-Z]{1}[a-z]{1,40}"
+                                title="First letter must be uppercase, 40 maximum characters"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
                             <CLabel htmlFor="pesel">Pesel</CLabel>
                             <CInput
-                                type="text"
+                                type="number"
                                 id="pesel"
                                 name="pesel"
                                 value={this.state.activeItem.pesel}
                                 onChange={this.handleChange}
                                 placeholder="Enter customer pesel"
+                                min='10000000000'
+                                max='99999999999'
+                                step="1"
+                                required
                             />
                         </CFormGroup>
                     </CForm>
                 </CModalBody>
                 <CModalFooter>
-                    <CButton size="sm" color="primary" onClick={() => onSave(this.state.activeItem)}>
-                        Save
-                    </CButton>
+                    <CButton type="submit" form="editCustomerForm" size="sm" color="primary">Save</CButton>
                 </CModalFooter>
             </CModal>
         );

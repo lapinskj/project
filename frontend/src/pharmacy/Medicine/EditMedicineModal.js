@@ -54,7 +54,7 @@ export default class EditMedicineModal extends Component {
                     <h4>Medicine edit</h4>
                 </CModalHeader>
                 <CModalBody>
-                    <CForm action="" method="post">
+                    <CForm id="updateMedicineForm" onSubmit={(e) => onSave(this.state.activeItem, e)}>
                         <CFormGroup>
                             <CLabel htmlFor="name">Name</CLabel>
                             <CInput
@@ -64,6 +64,9 @@ export default class EditMedicineModal extends Component {
                                 value={this.state.activeItem.name}
                                 onChange={this.handleChange}
                                 placeholder="Enter name"
+                                pattern="[A-Z]{1}[a-z]{1,50}"
+                                title="First letter must be uppercase, 50 maximum characters"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -75,6 +78,7 @@ export default class EditMedicineModal extends Component {
                                 value={this.state.activeItem.dose}
                                 onChange={this.handleChange}
                                 placeholder="Enter dose"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -86,6 +90,7 @@ export default class EditMedicineModal extends Component {
                                 value={this.state.activeItem.capacity}
                                 onChange={this.handleChange}
                                 placeholder="Enter capacity"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -97,6 +102,9 @@ export default class EditMedicineModal extends Component {
                                 value={this.state.activeItem.brand}
                                 onChange={this.handleChange}
                                 placeholder="Enter brand"
+                                pattern="[A-Z]{1}[a-z]{1,50}"
+                                title="First letter must be uppercase, 50 maximum characters"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -108,6 +116,10 @@ export default class EditMedicineModal extends Component {
                                 value={this.state.activeItem.price}
                                 onChange={this.handleChange}
                                 placeholder="Enter price"
+                                min="0.01"
+                                step="0.01"
+                                max="9999"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -119,6 +131,9 @@ export default class EditMedicineModal extends Component {
                                 value={this.state.activeItem.quantity}
                                 onChange={this.handleChange}
                                 placeholder="Enter quantity"
+                                min="0"
+                                step="1"
+                                required
                             />
                         </CFormGroup>
                         <CFormGroup>
@@ -128,6 +143,7 @@ export default class EditMedicineModal extends Component {
                                 id="category"
                                 value={this.state.activeItem.category.id}
                                 onChange={this.handleChange}
+                                required
                             >
                                 {this.renderCategories()}
                             </CSelect>
@@ -135,9 +151,7 @@ export default class EditMedicineModal extends Component {
                     </CForm>
                 </CModalBody>
                 <CModalFooter>
-                    <CButton size="sm" color="primary" onClick={() => onSave(this.state.activeItem)}>
-                        Save
-                    </CButton>
+                    <CButton type="submit" form="updateMedicineForm" size="sm" color="primary">Save</CButton>
                 </CModalFooter>
             </CModal>
         )

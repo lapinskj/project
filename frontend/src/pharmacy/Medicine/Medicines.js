@@ -41,11 +41,16 @@ class Medicines extends Component {
     };
 
 
-    handleSubmit = item => {
+    handleSubmit = (item, e) => {
+        e.preventDefault();
         this.toggle();
         const config = returnConfig();
         let data = item;
         delete data.image;
+        if (data.category.id){
+            data.category = data.category.id
+        }
+
         if (item.id) {
             axios
                 .patch(`http://localhost:8000/medicines/${item.id}/`, data, config)

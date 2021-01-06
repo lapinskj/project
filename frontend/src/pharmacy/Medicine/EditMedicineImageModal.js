@@ -43,6 +43,7 @@ export default class EditMedicineImageModal extends Component {
                                 type="file"
                                 name="image"
                                 onChange={this.handleFileChange}
+                                required
                             />
                         </CFormGroup>
 

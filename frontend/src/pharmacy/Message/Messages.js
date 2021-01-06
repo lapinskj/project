@@ -6,7 +6,9 @@ import {
     CWidgetIcon,
     CCard,
     CCardBody,
-    CCardHeader, CJumbotron
+    CCardHeader,
+    CListGroup,
+    CListGroupItem,
 } from '@coreui/react'
 import Divider from '@material-ui/core/Divider';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
@@ -78,7 +80,7 @@ class Messages extends Component {
         return messagesItems.map(item => (
             <li key={item.id}>
                 <span>
-                    <button onClick={() => this.handleDone(item, messagesItems.indexOf(item))} className="btn btn-info m-2">
+                    <button onClick={() => this.handleDone(item, messagesItems.indexOf(item))} className="btn">
                         <CheckBoxOutlineBlankIcon/>
                     </button>
                 </span>
@@ -98,7 +100,7 @@ class Messages extends Component {
         return messagesItems.map(item => (
             <li key={item.id}>
                 <span>
-                    <button onClick={() => this.handleDone(item, messagesItems.indexOf(item))} className="btn btn-info m-2">
+                    <button onClick={() => this.handleDone(item, messagesItems.indexOf(item))} className="btn">
                         <CheckBoxIcon/>
                     </button>
                 </span>
@@ -115,7 +117,7 @@ class Messages extends Component {
             <>
                 <CCard>
                     <CCardHeader>
-                        <h3>New orders reminders</h3>
+                        <h3>Reminders of new orders</h3>
                     </CCardHeader>
                     <CCardBody>
                         <div>

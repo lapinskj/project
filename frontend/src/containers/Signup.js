@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { signup } from '../actions/auth';
 import {
     CButton,
     CCard,
     CCardBody,
-    CCardFooter,
     CCol,
-    CContainer,
     CForm,
     CInput,
     CInputGroup,
@@ -16,7 +14,6 @@ import {
     CInputGroupText,
     CRow
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
 import MailIcon from '@material-ui/icons/Mail';
 import LockIcon from '@material-ui/icons/Lock';
 import PersonIcon from '@material-ui/icons/Person';
@@ -60,7 +57,7 @@ const Signup = ({ signup, isAuthenticated }) => {
                 <CCol md="9" lg="7" xl="6">
                     <CCard className="mx-4">
                         <CCardBody className="p-4">
-                            <CForm>
+                            <CForm onSubmit={e => onSubmit(e)}>
                                 <h1>Sign up</h1>
                                 <p className="text-muted">Create your account</p>
                                 <CInputGroup className="mb-3">
@@ -93,6 +90,8 @@ const Signup = ({ signup, isAuthenticated }) => {
                                         name='name'
                                         value={name}
                                         onChange={e => onChange(e)}
+                                        pattern="[A-Z]{1}[a-z]{1,20}"
+                                        title="First letter must be uppercase, 20 maximum characters"
                                         required
                                     />
                                 </CInputGroup>
@@ -109,6 +108,8 @@ const Signup = ({ signup, isAuthenticated }) => {
                                         name='surname'
                                         value={surname}
                                         onChange={e => onChange(e)}
+                                        pattern="[A-Z]{1}[a-z]{1,40}"
+                                        title="First letter must be uppercase, 40 maximum characters"
                                         required
                                     />
                                 </CInputGroup>
@@ -124,6 +125,7 @@ const Signup = ({ signup, isAuthenticated }) => {
                                         placeholder='Pesel'
                                         min='10000000000'
                                         max='99999999999'
+                                        step="1"
                                         name='pesel'
                                         value={pesel}
                                         onChange={e => onChange(e)}
@@ -143,6 +145,8 @@ const Signup = ({ signup, isAuthenticated }) => {
                                         name='phone_number'
                                         value={phone_number}
                                         onChange={e => onChange(e)}
+                                        pattern="^[+][0-9]{2}[0-9]{3}[0-9]{3}[0-9]{3}"
+                                        title="Phone number must be in pattern '+48500500500'"
                                         required
                                     />
                                 </CInputGroup>
@@ -160,7 +164,8 @@ const Signup = ({ signup, isAuthenticated }) => {
                                         name='password'
                                         value={password}
                                         onChange={e => onChange(e)}
-                                        minLength='6'
+                                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                        title="Password must have at least one number and one uppercase and lowercase letter, and be 8 or more characters long"
                                         required
                                     />
                                 </CInputGroup>
@@ -178,7 +183,8 @@ const Signup = ({ signup, isAuthenticated }) => {
                                         name='re_password'
                                         value={re_password}
                                         onChange={e => onChange(e)}
-                                        minLength='6'
+                                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                        title="Password must have at least one number and one uppercase and lowercase letter, and be 8 or more characters long"
                                         required
                                     />
                                 </CInputGroup>
