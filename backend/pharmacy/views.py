@@ -240,6 +240,11 @@ class NewOrderMessageViewSet(viewsets.ModelViewSet):
     serializer_class = NewOrderMessageSerializer
     permission_classes = [IsStaff]
 
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return NewOrderMessageSerializerList
+        return NewOrderMessageSerializer
+
     @action(detail=False, methods=['get'], url_path='countUnread')
     def count_unread(self, request):
         queryset = self.filter_queryset(self.get_queryset())

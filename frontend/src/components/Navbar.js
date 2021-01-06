@@ -10,6 +10,7 @@ import {
     CHeaderNavItem,
     CHeaderNavLink,
 } from '@coreui/react'
+import returnConfig from "../pharmacy/returnConfig";
 
 
 class Navbar extends Component {
@@ -23,20 +24,12 @@ class Navbar extends Component {
     }
 
     getUnreadMessagesCount () {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .get("http://localhost:8000/newOrderMessages/countUnread/", config)
             .then(res => {
                 this.setState({ unreadMessagesCount: res.data['count'] })
-            }
-            )
-            .catch(err => console.log(err));
+            }).catch(err => console.log(err));
     }
 
     componentDidMount() {
@@ -86,14 +79,11 @@ class Navbar extends Component {
 
     render () {
         return(
-            this.props.user ?
+            this.props.user && this.props.isAuthenticated ?
                 (
                     <CHeader>
                         <CHeaderNav className="d-md-down-none ml-auto">
-                            { this.props.isAuthenticated ?
-                                this.renderAuthLinks() :
-                                this.renderGuestsLinks()
-                            }
+                            {this.renderAuthLinks()}
                         </CHeaderNav>
                     </CHeader>
                 )

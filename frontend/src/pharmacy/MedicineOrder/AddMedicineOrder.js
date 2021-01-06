@@ -250,10 +250,8 @@ class AddMedicineOrder extends Component {
                             </CFormGroup>
 
                             <CRow>
-                                <CCol md="9">
+                                <CCol md="12" className="d-flex w-100 mb-3 justify-content-between">
                                     <CLabel col="lg">Order items</CLabel>
-                                </CCol>
-                                <CCol md="3">
                                     <CButton type="button" color="secondary" onClick={this.addOrderItem}>
                                         <CIcon name="cil-plus"/> Add another medicine
                                     </CButton>

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { connect } from 'react-redux';
 import { checkAuthenticated, load_user } from '../actions/auth';
-import {Suspense} from "react";
 import { CContainer, CFooter } from '@coreui/react'
 import Sidebar from "../components/Sidebar";
 

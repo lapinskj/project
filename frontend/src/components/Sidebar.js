@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {useSelector, useDispatch, connect} from 'react-redux'
+import {connect} from 'react-redux'
 import {
     CCreateElement,
     CSidebar,
@@ -12,12 +12,12 @@ import {
     CSidebarNavItem,
     CImg
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
 
 import nav_staff from './_nav_staff'
 import nav_user from './_nav_user';
 import nav_logged_out from './_nav_logged_out';
 import logo from "../assets/pharmacy_logo.png"
+import logo_big from "../assets/pharmacy_logo_big.png"
 
 
 class Sidebar extends  Component {
@@ -35,9 +35,9 @@ class Sidebar extends  Component {
                 (
                     <CSidebar>
                         <CSidebarBrand className="d-md-down-none" to="/">
-                            <CIcon
+                            <CImg
+                                src={logo_big}
                                 className="c-sidebar-brand-full"
-                                name="logo-negative"
                                 height={35}
                             />
                             <CImg
@@ -69,9 +69,9 @@ class Sidebar extends  Component {
                 (
                     <CSidebar>
                         <CSidebarBrand className="d-md-down-none" to="/">
-                            <CIcon
+                            <CImg
+                                src={logo_big}
                                 className="c-sidebar-brand-full"
-                                name="logo-negative"
                                 height={35}
                             />
                             <CImg

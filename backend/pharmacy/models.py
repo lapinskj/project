@@ -107,6 +107,9 @@ class NewOrderMessage(models.Model):
     started = models.DateTimeField(auto_now_add=True)
     unread = models.BooleanField(default=True)
 
+    class Meta:
+        ordering = ['-started']
+
 
 class Category(models.Model):
     code = models.CharField(max_length=10)

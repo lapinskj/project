@@ -1,19 +1,19 @@
 import React, {Component} from "react";
 import axios from "axios";
 import {
-    CRow,
-    CCol,
-    CWidgetIcon,
+    CButton,
     CCard,
     CCardBody,
     CCardHeader,
     CListGroup,
     CListGroupItem,
 } from '@coreui/react'
-import Divider from '@material-ui/core/Divider';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import returnConfig from "../returnConfig";
+import {Link} from "react-router-dom";
 
 
 class Messages extends Component {
@@ -29,44 +29,23 @@ class Messages extends Component {
         this.refreshList();
     }
 
-    handleDone = (item, index) => {
+    handleDone = (item) => {
         item.unread = !item.unread;
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .put(`http://localhost:8000/newOrderMessages/${item.id}/updateMessageRead/`, item, config)
             .then(res => this.refreshList());
-        //const messagesList = this.state.messagesList;
-        //messagesList.splice(index, 1);
-        //this.setState({messagesList})
     };
 
     handleDeleteAllRead = () => {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .delete("http://localhost:8000/newOrderMessages/deleteAllRead/", config)
             .then(res => this.refreshList());
     };
 
     refreshList = () => {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .get("http://localhost:8000/newOrderMessages/", config)
             .then(res => {this.setState({ messagesList: res.data })})
@@ -78,18 +57,23 @@ class Messages extends Component {
             item => item.unread === true
         );
         return messagesItems.map(item => (
-            <li key={item.id}>
-                <span>
-                    <button onClick={() => this.handleDone(item, messagesItems.indexOf(item))} className="btn">
-                        <CheckBoxOutlineBlankIcon/>
-                    </button>
-                </span>
-                <span>
-                    <b>
-                        #{item.id}: Order nr {item.medicine_order} at {item.started}
-                    </b>
-                </span>
-            </li>
+            <CListGroupItem key={item.id} action>
+                <h5 className="d-flex w-100 justify-content-between">
+                    <div>
+                        <CButton onClick={() => this.handleDone(item, messagesItems.indexOf(item))} className="btn-brand mr-1 mb-1">
+                            <CheckBoxOutlineBlankIcon/>
+                        </CButton>
+                        <Link to={`/medicineOrder/${item.medicine_order.id}/` }>
+                            Order nr {item.medicine_order.id}
+                        </Link>
+                    </div>
+                    <small>{item.started}</small>
+                </h5>
+                <p className="pl-2" >Customer: {item.medicine_order.customer.name} {item.medicine_order.customer.surname} {item.medicine_order.customer.pesel}, total price: {item.medicine_order.total_price}</p>
+                {item.medicine_order.medicineOrderItems.map( orderItem => (
+                    <p><ChevronRightIcon/>{orderItem.medicine.name}, {orderItem.medicine.brand}, {orderItem.medicine.dose}, {orderItem.medicine.capacity} x {orderItem.amount}</p>
+                ))}
+            </CListGroupItem>
         ));
     };
 
@@ -98,16 +82,23 @@ class Messages extends Component {
             item => item.unread === false
         );
         return messagesItems.map(item => (
-            <li key={item.id}>
-                <span>
-                    <button onClick={() => this.handleDone(item, messagesItems.indexOf(item))} className="btn">
-                        <CheckBoxIcon/>
-                    </button>
-                </span>
-                <span>
-                    #{item.id}: Order nr {item.medicine_order} at {item.started}
-                </span>
-            </li>
+            <CListGroupItem key={item.id} action>
+                <h5 className="d-flex w-100 justify-content-between">
+                    <div>
+                        <CButton onClick={() => this.handleDone(item, messagesItems.indexOf(item))} className="btn-brand mr-1 mb-1">
+                            <CheckBoxIcon/>
+                        </CButton>
+                        <Link to={`/medicineOrder/${item.medicine_order.id}/` }>
+                            Order nr {item.medicine_order.id}
+                        </Link>
+                    </div>
+                    <small>{item.started}</small>
+                </h5>
+                <p className="pl-2" >Customer: {item.medicine_order.customer.name} {item.medicine_order.customer.surname} {item.medicine_order.customer.pesel}, total price: {item.medicine_order.total_price}</p>
+                {item.medicine_order.medicineOrderItems.map( orderItem => (
+                    <p><ChevronRightIcon/>{orderItem.medicine.name}, {orderItem.medicine.brand}, {orderItem.medicine.dose}, {orderItem.medicine.capacity} x {orderItem.amount}</p>
+                ))}
+            </CListGroupItem>
         ));
     };
 
@@ -120,23 +111,19 @@ class Messages extends Component {
                         <h3>Reminders of new orders</h3>
                     </CCardHeader>
                     <CCardBody>
-                        <div>
-                            <ul>
-                                {this.renderUnreadMessages()}
-                            </ul>
-                        </div>
-                        <hr className="my-2" />
-                        <div>
-                            <h5 className="text-muted">Completed</h5>
-                            <button onClick={() => this.handleDeleteAllRead()} className="btn btn-danger m-2">
+                        <CListGroup className="font-weight-bold">
+                            {this.renderUnreadMessages()}
+                        </CListGroup>
+                        <div className="d-flex w-100 justify-content-between my-3">
+                            <h4 className="pt-2">Completed</h4>
+                            <CButton onClick={() => this.handleDeleteAllRead()} className="btn btn-danger">
                                 <DeleteForeverIcon/> Delete all read messages
-                            </button>
-                            <ul className="text-muted">
-                                {this.renderReadMessages()}
-                            </ul>
+                            </CButton>
                         </div>
+                        <CListGroup>
+                            {this.renderReadMessages()}
+                        </CListGroup>
                     </CCardBody>
-
                 </CCard>
             </>
         );

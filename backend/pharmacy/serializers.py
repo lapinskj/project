@@ -76,6 +76,14 @@ class MedicineOrderSerializerList(serializers.ModelSerializer):
         fields = ('id', 'customer', 'total_price', 'orderStatus', 'medicineOrderItems', 'created')
 
 
+class NewOrderMessageSerializerList(serializers.ModelSerializer):
+    medicine_order = MedicineOrderSerializerList()
+
+    class Meta:
+        model = NewOrderMessage
+        fields = '__all__'
+
+
 # POST / PUT serializers
 class MedicineSerializer(serializers.ModelSerializer):
     class Meta:
