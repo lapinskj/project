@@ -12,9 +12,7 @@ import {
     CImg, CInput,
     CLabel
 } from "@coreui/react";
-import medicines_fields from "../FormFields/medicines";
-import EditIcon from "@material-ui/icons/Edit";
-import DeleteIcon from "@material-ui/icons/Delete";
+import medicines_user_fields from "../FormFields/medicinesUser";
 
 
 class SearchMedicines extends Component {
@@ -135,7 +133,7 @@ class SearchMedicines extends Component {
                     <CCardBody>
                         <CDataTable
                             items={medicinesList}
-                            fields={medicines_fields}
+                            fields={medicines_user_fields}
                             itemsPerPage={5}
                             pagination
                             sorter
@@ -157,24 +155,7 @@ class SearchMedicines extends Component {
                                                 {item.category.name}
                                             </CBadge>
                                         </td>
-                                    ),
-                                'edit':
-                                    (item)=>(
-                                        <td>
-                                            <CButton color="info" onClick={() => this.editItem(item)} className="btn-brand mr-1 mb-1">
-                                                <EditIcon/>
-                                            </CButton>
-                                        </td>
-                                    ),
-                                'delete':
-                                    (item)=>(
-                                        <td>
-                                            <CButton color="danger" onClick={() => this.handleDelete(item)} className="btn-brand mr-1 mb-1">
-                                                <DeleteIcon/>
-                                            </CButton>
-                                        </td>
                                     )
-
                             }}
                         />
                     </CCardBody>

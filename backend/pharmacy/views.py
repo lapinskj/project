@@ -10,6 +10,7 @@ import django_filters
 from django_filters import rest_framework as filters
 from .permissions import *
 from django.core.mail import send_mail
+from datetime import date, datetime
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -141,19 +142,37 @@ class MedicineOrderViewSet(viewsets.ModelViewSet):
             medicine_order.save()
             serializer = MedicineOrderSerializerList(medicine_order)
             if medicine_order.customer.user and not medicine_order.customer.user.is_staff:
+                title = ['Twoje zamówienie jest ', str(order_status.lower())]
+                title = ''.join(title)
+                content = ["Informujemy, że zamówienie nr ", str(medicine_order.id), ' zmieniło status na ', str(order_status.lower()), "."]
+                content = ''.join(content)
                 email = medicine_order.customer.user.email
-                send_mail('Test wysyłania mejli xd', order_status.lower(), 'from@example.com', [email])
+                send_mail(title, content, 'from@example.com', [email])
             return Response(serializer.data)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['get'], url_path='countOrders')
     def count_orders(self, request):
+        today = date.today()
         if not request.user.is_staff:
             return Response(status=status.HTTP_403_FORBIDDEN)
         queryset = self.filter_queryset(self.get_queryset())
-        queryset = queryset.filter(orderStatus='Zakończone')
+        queryset = queryset.filter(orderStatus='Zakończone', created__month=today.month)
         count = queryset.count()
         content = {'count': count}
+        return Response(content)
+
+    @action(detail=False, methods=['get'], url_path='countRevenue')
+    def count_revenue(self, request):
+        today = date.today()
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(orderStatus='Zakończone', created__month=today.month)
+        revenue = 0
+        for order in queryset:
+            revenue = revenue + order.total_price
+        content = {'revenue': revenue}
         return Response(content)
 
 

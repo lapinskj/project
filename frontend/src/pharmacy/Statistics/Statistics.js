@@ -9,6 +9,7 @@ import {
     CCardHeader
 } from '@coreui/react'
 import CIcon from "@coreui/icons-react";
+import returnConfig from "../returnConfig";
 
 class Statistics extends Component {
 
@@ -17,38 +18,36 @@ class Statistics extends Component {
         this.state = {
             ordersNumber: '',
             customersNumber: '',
-            medicinesNumber: ''
+            medicinesNumber: '',
+            revenue: null
         };
     }
 
     componentDidMount() {
         this.getOrdersNumber();
         this.getCustomersNumber();
+        this.getRevenue();
         this.getMedicinesNumber();
     }
 
     getOrdersNumber = () => {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .get("http://localhost:8000/medicineOrders/countOrders/", config)
             .then(res => {this.setState({ ordersNumber: res.data['count'] })})
             .catch(err => console.log(err));
     };
 
+    getRevenue = () => {
+        const config = returnConfig();
+        axios
+            .get("http://localhost:8000/medicineOrders/countRevenue/", config)
+            .then(res => {this.setState({ revenue: res.data['revenue'] })})
+            .catch(err => console.log(err));
+    };
+
     getCustomersNumber = () => {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .get("http://localhost:8000/customers/countCustomers/", config)
             .then(res => {this.setState({ customersNumber: res.data['count'] })})
@@ -56,13 +55,7 @@ class Statistics extends Component {
     };
 
     getMedicinesNumber = () => {
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .get("http://localhost:8000/medicines/countMedicines/", config)
             .then(res => {this.setState({ medicinesNumber: res.data['count'] })})
@@ -90,7 +83,7 @@ class Statistics extends Component {
                                 </CWidgetIcon>
                             </CCol>
                             <CCol xs="12" sm="6" lg="3">
-                                <CWidgetIcon text="całkowita wartość zamówień" header="$1.999,50" color="warning" iconPadding={false}>
+                                <CWidgetIcon text="całkowita wartość zamówień" header={this.state.revenue} color="warning" iconPadding={false}>
                                     <CIcon width={24} name="cil-dollar"/>
                                 </CWidgetIcon>
                             </CCol>

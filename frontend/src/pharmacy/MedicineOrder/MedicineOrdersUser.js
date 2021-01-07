@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import axios from "axios";
-import UpdateOrderStatusModal from "./UpdateOrderStatusModal";
 import {Link} from "react-router-dom";
 import {CBadge, CButton, CCard, CCardBody, CCardHeader, CDataTable, CCollapse, CImg, CRow, CCol} from "@coreui/react";
 import DeleteIcon from "@material-ui/icons/Delete";
-import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import medicine_orders_fields from "../FormFields/medicineOrders";
+import medicine_orders_user_fields from "../FormFields/medicineOrdersUser";
 import returnConfig from "../returnConfig";
 
 
@@ -72,10 +70,6 @@ class MedicineOrders extends Component {
             .then(res => this.refreshOrdersList());
     };
 
-    handleStatusUpdate = item => {
-        this.setState({ activeItem: item, modal: !this.state.modal });
-    };
-
     handleStatusSubmit = (item, e)=> {
         e.preventDefault();
         this.toggle();
@@ -97,7 +91,7 @@ class MedicineOrders extends Component {
                     <CCardBody>
                         <CDataTable
                             items={medicineOrdersList}
-                            fields={medicine_orders_fields}
+                            fields={medicine_orders_user_fields}
                             itemsPerPage={10}
                             pagination
                             sorter
@@ -124,14 +118,6 @@ class MedicineOrders extends Component {
                                             <CBadge color={this.getBadge(item.orderStatus)}>
                                                 {item.orderStatus}
                                             </CBadge>
-                                        </td>
-                                    ),
-                                'update_status':
-                                    (item)=>(
-                                        <td>
-                                            <CButton color="secondary" onClick={() => this.handleStatusUpdate(item)} className="btn-brand mr-1 mb-1">
-                                                <ArrowUpwardIcon/>
-                                            </CButton>
                                         </td>
                                     ),
                                 'delete':
@@ -249,14 +235,6 @@ class MedicineOrders extends Component {
                         />
                     </CCardBody>
                 </CCard>
-                {this.state.modal ? (
-                    <UpdateOrderStatusModal
-                        activeItem={this.state.activeItem}
-                        choices={this.state.updateChoices}
-                        toggle={this.toggle}
-                        onStatusSave={this.handleStatusSubmit}
-                    />
-                ) : null}
             </>
         );
     }

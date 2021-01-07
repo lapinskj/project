@@ -6,6 +6,7 @@ import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import HomeIcon from '@material-ui/icons/Home';
 import SearchIcon from '@material-ui/icons/Search';
 import BarChartIcon from '@material-ui/icons/BarChart';
+import PersonIcon from '@material-ui/icons/Person';
 
 const _nav_staff =  [
   {
@@ -93,6 +94,17 @@ const _nav_staff =  [
     name: 'Statistics',
     to: '/statistics',
     icon: <BarChartIcon className="c-sidebar-nav-icon"/>,
+
+  },
+  {
+    _tag: 'CSidebarNavTitle',
+    _children: ['Account']
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Account',
+    to: '/account',
+    icon: <PersonIcon className="c-sidebar-nav-icon"/>,
 
   },
   {
