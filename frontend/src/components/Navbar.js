@@ -1,16 +1,13 @@
 import React, { Fragment , Component} from 'react';
 import { connect } from 'react-redux';
 import { logout } from '../actions/auth';
-import Badge from '@material-ui/core/Badge';
-import InboxIcon from '@material-ui/icons/Inbox';
-import axios from "axios";
+import MessagesCounter from "./MessagesCounter.js";
 import {
     CHeader,
     CHeaderNav,
     CHeaderNavItem,
     CHeaderNavLink,
 } from '@coreui/react'
-import returnConfig from "../pharmacy/returnConfig";
 
 
 class Navbar extends Component {
@@ -23,38 +20,14 @@ class Navbar extends Component {
         };
     }
 
-    getUnreadMessagesCount () {
-        const config = returnConfig();
-        axios
-            .get("http://localhost:8000/newOrderMessages/countUnread/", config)
-            .then(res => {
-                this.setState({ unreadMessagesCount: res.data['count'] })
-            }).catch(err => console.log(err));
-    }
 
-    componentDidMount() {
-        this.getUnreadMessagesCount();
-        this.interval = setInterval(() => {
-            this.getUnreadMessagesCount();
-        }, 60000);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
 
     renderAuthLinks = () => {
         return(
             <Fragment>
                 {this.props.user.is_staff ?
                     (
-                        <CHeaderNavItem  className="px-3">
-                            <CHeaderNavLink to="/newOrderMessages">
-                                <Badge badgeContent={this.state.unreadMessagesCount} color="primary">
-                                    <InboxIcon />
-                                </Badge>
-                            </CHeaderNavLink>
-                        </CHeaderNavItem>
+                        <MessagesCounter/>
                     ):null
                 }
                 <CHeaderNavItem className="px-3" >
