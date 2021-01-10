@@ -19,7 +19,7 @@ class Statistics extends Component {
             ordersNumber: '',
             customersNumber: '',
             medicinesNumber: '',
-            revenue: null
+            revenue: ''
         };
     }
 
@@ -73,22 +73,22 @@ class Statistics extends Component {
                     <CCardBody>
                         <CRow>
                             <CCol xs="12" sm="6" lg="3">
-                                <CWidgetIcon text="liczba klientów" header={this.state.customersNumber} color="primary" iconPadding={false}>
+                                <CWidgetIcon text="total customers" header={this.state.customersNumber} color="primary" iconPadding={false}>
                                     <CIcon width={24} name="cil-people"/>
                                 </CWidgetIcon>
                             </CCol>
                             <CCol xs="12" sm="6" lg="3">
-                                <CWidgetIcon text="liczba zamówień" header={this.state.ordersNumber} color="info" iconPadding={false}>
+                                <CWidgetIcon text="finished orders current month" header={this.state.ordersNumber} color="info" iconPadding={false}>
                                     <CIcon width={24} name="cil-basket"/>
                                 </CWidgetIcon>
                             </CCol>
                             <CCol xs="12" sm="6" lg="3">
-                                <CWidgetIcon text="całkowita wartość zamówień" header={this.state.revenue} color="warning" iconPadding={false}>
+                                <CWidgetIcon text="total price of orders current month" header={this.state.revenue} color="warning" iconPadding={false}>
                                     <CIcon width={24} name="cil-dollar"/>
                                 </CWidgetIcon>
                             </CCol>
                             <CCol xs="12" sm="6" lg="3">
-                                <CWidgetIcon text="Liczba produktów w sprzedaży" header={this.state.medicinesNumber} color="danger" iconPadding={false}>
+                                <CWidgetIcon text="products on sale" header={this.state.medicinesNumber} color="danger" iconPadding={false}>
                                     <CIcon width={24} name="cil-medical-cross"/>
                                 </CWidgetIcon>
 

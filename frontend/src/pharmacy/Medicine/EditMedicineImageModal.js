@@ -4,12 +4,11 @@ import {
     CForm,
     CFormGroup,
     CLabel,
-    CInput,
     CModal,
     CModalHeader,
     CModalBody,
     CModalFooter,
-    CSelect, CInputFile
+    CInputFile
 } from '@coreui/react'
 
 export default class EditMedicineImageModal extends Component {
@@ -43,6 +42,7 @@ export default class EditMedicineImageModal extends Component {
                                 type="file"
                                 name="image"
                                 onChange={this.handleFileChange}
+                                accept="image/*"
                                 required
                             />
                         </CFormGroup>

@@ -26,7 +26,7 @@ class CustomerSerializer(serializers.ModelSerializer):
 class CustomerSerializerUser(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ('id', 'name', 'surname')
+        fields = ('id', 'name', 'surname', 'pesel')
 
 
 class CategorySerializer(serializers.ModelSerializer):

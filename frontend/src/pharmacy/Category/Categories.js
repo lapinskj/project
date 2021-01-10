@@ -75,7 +75,7 @@ class Categories extends Component {
                         <CDataTable
                             items={categories}
                             fields={categories_fields}
-                            itemsPerPage={5}
+                            itemsPerPage={7}
                             pagination
                             sorter
                             columnFilter

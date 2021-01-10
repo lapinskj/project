@@ -9,13 +9,14 @@ import Activate from './containers/Activate';
 import ResetPassword from './containers/ResetPassword';
 import ResetPasswordConfirm from './containers/ResetPasswordConfirm';
 import Customers from "./pharmacy/Customer/Customers";
+import Customer from "./pharmacy/Customer/Customer";
 import Medicines from "./pharmacy/Medicine/Medicines";
 import MedicinesUser from "./pharmacy/Medicine/MedicinesUser";
 import SearchMedicines from "./pharmacy/Medicine/SearchMedicines";
 import MedicineOrder from "./pharmacy/MedicineOrder/MedicineOrder";
 import MedicineOrderUser from "./pharmacy/MedicineOrder/MedicineOrderUser";
 import MedicineOrders from "./pharmacy/MedicineOrder/MedicineOrders";
-import MedicineOrdersUSer from "./pharmacy/MedicineOrder/MedicineOrdersUser";
+import MedicineOrdersUser from "./pharmacy/MedicineOrder/MedicineOrdersUser";
 import AddMedicineOrder from "./pharmacy/MedicineOrder/AddMedicineOrder";
 import AddMedicineOrderUser from "./pharmacy/MedicineOrder/AddMedicineOrderUser";
 import Messages from "./pharmacy/Message/Messages";
@@ -26,16 +27,16 @@ import Layout from './hocs/Layout';
 import AddCustomer from "./pharmacy/Customer/AddCustomer";
 import AddMedicine from "./pharmacy/Medicine/AddMedicine";
 import AddCategory from "./pharmacy/Category/AddCategory";
+import Account from "./pharmacy/AccountManagement/Account";
 import Info from "./pharmacy/Info"
 
-const App = ({ isAuthenticated, user }) => {
-
+const App = (props) => {
 
     return (
         <Router>
             <Layout>
-                {isAuthenticated && user ?
-                    (user.is_staff ?
+                {props.isAuthenticated && props.user ?
+                    (props.user.is_staff ?
                             (
                                 <Switch>
                                     <Route exact path='/' component={Home}/>
@@ -44,6 +45,9 @@ const App = ({ isAuthenticated, user }) => {
                                     <Route exact path='/reset_password' component={ResetPassword}/>
                                     <Route exact path='/password/reset/confirm/:uid/:token' component={ResetPasswordConfirm}/>
                                     <Route exact path='/activate/:uid/:token' component={Activate}/>
+                                    <Route exact path="/account">
+                                        <Account {...props}/>
+                                    </Route>
                                     <Route exact path="/customers">
                                         <Customers/>
                                     </Route>
@@ -89,8 +93,11 @@ const App = ({ isAuthenticated, user }) => {
                                     <Route exact path='/reset_password' component={ResetPassword}/>
                                     <Route exact path='/password/reset/confirm/:uid/:token' component={ResetPasswordConfirm}/>
                                     <Route exact path='/activate/:uid/:token' component={Activate}/>
+                                    <Route exact path="/account">
+                                        <Account {...props}/>
+                                    </Route>
                                     <Route exact path="/customers">
-                                        <Customers/>
+                                        <Customer/>
                                     </Route>
                                     <Route exact path="/medicines">
                                         <MedicinesUser/>
@@ -99,7 +106,7 @@ const App = ({ isAuthenticated, user }) => {
                                         <SearchMedicines/>
                                     </Route>
                                     <Route exact path="/medicineOrders">
-                                        <MedicineOrdersUSer/>
+                                        <MedicineOrdersUser/>
                                     </Route>
                                     <Route exact path="/medicineOrder/:id" component={MedicineOrderUser}/>
                                     <Route exact path="/newMedicineOrder">

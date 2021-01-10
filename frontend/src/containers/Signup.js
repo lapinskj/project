@@ -157,7 +157,6 @@ const Signup = ({ signup, isAuthenticated }) => {
                                         </CInputGroupText>
                                     </CInputGroupPrepend>
                                     <CInput
-                                        autoComplete="new-password"
                                         className='form-control'
                                         type='password'
                                         placeholder='Password'
@@ -176,7 +175,6 @@ const Signup = ({ signup, isAuthenticated }) => {
                                         </CInputGroupText>
                                     </CInputGroupPrepend>
                                     <CInput
-                                        autoComplete="new-password"
                                         type="password"
                                         placeholder="Confirm password"
                                         className='form-control'

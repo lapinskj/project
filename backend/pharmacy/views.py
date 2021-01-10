@@ -2,31 +2,12 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from pharmacy.models import *
 from pharmacy.serializers import *
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import action
 from rest_framework import viewsets, status
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-import django_filters
 from django_filters import rest_framework as filters
 from .permissions import *
 from django.core.mail import send_mail
-from datetime import date, datetime
-
-
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        print("bbbb")
-        # Add custom claims
-        token['if_staff'] = user.is_staff
-        # ...
-
-        return token
-
-
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
+from datetime import date
 
 
 # Filter class
@@ -59,9 +40,9 @@ class CustomerViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         permission_classes = []
-        if self.action in ('list', 'retrieve', 'update', 'partial_update'):
+        if self.action in ('list', 'retrieve', 'partial_update'):
             permission_classes = [IsLoggedInUserOrAdmin]
-        elif self.action in ('create', 'destroy'):
+        elif self.action in ('create', 'destroy', 'update'):
             permission_classes = [IsStaff]
         return [permission() for permission in permission_classes]
 
@@ -142,9 +123,10 @@ class MedicineOrderViewSet(viewsets.ModelViewSet):
             medicine_order.save()
             serializer = MedicineOrderSerializerList(medicine_order)
             if medicine_order.customer.user and not medicine_order.customer.user.is_staff:
-                title = ['Twoje zamówienie jest ', str(order_status.lower())]
+                title = ['Your order is ', str(order_status.lower())]
                 title = ''.join(title)
-                content = ["Informujemy, że zamówienie nr ", str(medicine_order.id), ' zmieniło status na ', str(order_status.lower()), "."]
+                content = ["We would like to inform that order number ", str(medicine_order.id),
+                           ' has changed status to ', str(order_status.lower()), "."]
                 content = ''.join(content)
                 email = medicine_order.customer.user.email
                 send_mail(title, content, 'from@example.com', [email])
@@ -157,7 +139,7 @@ class MedicineOrderViewSet(viewsets.ModelViewSet):
         if not request.user.is_staff:
             return Response(status=status.HTTP_403_FORBIDDEN)
         queryset = self.filter_queryset(self.get_queryset())
-        queryset = queryset.filter(orderStatus='Zakończone', created__month=today.month)
+        queryset = queryset.filter(orderStatus='Finished', created__month=today.month)
         count = queryset.count()
         content = {'count': count}
         return Response(content)
@@ -168,7 +150,7 @@ class MedicineOrderViewSet(viewsets.ModelViewSet):
         if not request.user.is_staff:
             return Response(status=status.HTTP_403_FORBIDDEN)
         queryset = self.filter_queryset(self.get_queryset())
-        queryset = queryset.filter(orderStatus='Zakończone', created__month=today.month)
+        queryset = queryset.filter(orderStatus='Finished', created__month=today.month)
         revenue = 0
         for order in queryset:
             revenue = revenue + order.total_price

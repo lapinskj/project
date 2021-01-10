@@ -69,7 +69,7 @@ class AddMedicine extends Component {
         const categoriesList = this.state.categoriesList;
         return categoriesList.map(category => (
             <option value={category.id}>
-                {category.id} {category.code} {category.name}
+                {category.code} {category.name}
             </option>
         ));
     };
@@ -199,6 +199,7 @@ class AddMedicine extends Component {
                                 type="file"
                                 name="image"
                                 onChange={this.handleFileChange}
+                                accept="image/*"
                                 required
                             />
                         </CFormGroup>

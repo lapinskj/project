@@ -14,7 +14,11 @@ import {
     USER_LOADED_SUCCESS,
     USER_LOADED_FAIL,
     AUTHENTICATED_FAIL,
-    AUTHENTICATED_SUCCESS
+    AUTHENTICATED_SUCCESS,
+    ACCOUNT_UPDATE_SUCCESS,
+    ACCOUNT_UPDATE_FAIL,
+    PASSWORD_CHANGE_SUCCESS,
+    PASSWORD_CHANGE_FAIL
 } from './types';
 
 
@@ -206,4 +210,62 @@ export const reset_password_confirm = (uid, token, new_password, re_new_password
 
 export const logout = () => dispatch => {
     dispatch ({ type: LOGOUT });
+};
+
+export const updateAccount = (account) => async dispatch => {
+    if (localStorage.getItem('access')) {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `JWT ${localStorage.getItem('access')}`,
+                'Accept': 'application/json'
+            }
+        };
+
+        try {
+            const res = await axios.put(`http://localhost:8000/auth/users/me/`,account, config);
+            console.log(res.data)
+            dispatch({
+                type: ACCOUNT_UPDATE_SUCCESS,
+                payload: res.data
+            });
+        } catch (err) {
+            dispatch({
+                type: ACCOUNT_UPDATE_FAIL
+            });
+        }
+    } else {
+        dispatch({
+            type: USER_LOADED_FAIL
+        });
+    }
+};
+
+export const changePassword = (passwords) => async dispatch => {
+    if (localStorage.getItem('access')) {
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `JWT ${localStorage.getItem('access')}`,
+                'Accept': 'application/json'
+            }
+        };
+
+        try {
+            const res = await axios.post(`http://localhost:8000/auth/users/set_password/`,passwords, config);
+            console.log(res.data)
+            dispatch({
+                type: PASSWORD_CHANGE_SUCCESS,
+                payload: res.data
+            });
+        } catch (err) {
+            dispatch({
+                type: PASSWORD_CHANGE_FAIL
+            });
+        }
+    } else {
+        dispatch({
+            type: USER_LOADED_FAIL
+        });
+    }
 };

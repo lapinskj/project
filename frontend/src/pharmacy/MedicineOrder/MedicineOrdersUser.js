@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import axios from "axios";
 import {Link} from "react-router-dom";
 import {CBadge, CButton, CCard, CCardBody, CCardHeader, CDataTable, CCollapse, CImg, CRow, CCol} from "@coreui/react";
-import DeleteIcon from "@material-ui/icons/Delete";
 import medicine_orders_user_fields from "../FormFields/medicineOrdersUser";
 import returnConfig from "../returnConfig";
 
@@ -43,10 +42,10 @@ class MedicineOrders extends Component {
 
     getBadge = (status)=>{
         switch (status) {
-            case 'Rozpoczęte': return 'danger';
-            case 'W trakcie realizacji': return 'warning';
-            case 'Gotowe do odbioru': return 'info';
-            case 'Zakończone': return 'success';
+            case 'Placed': return 'danger';
+            case 'In preparation': return 'warning';
+            case 'Ready to pick up': return 'info';
+            case 'Finished': return 'success';
             default: return 'primary'
         }
     };
@@ -61,22 +60,6 @@ class MedicineOrders extends Component {
             newDetails = [...details, index]
         }
         this.setState({details: newDetails})
-    };
-
-    handleDelete = item => {
-        const config = returnConfig();
-        axios
-            .delete(`http://localhost:8000/medicineOrders/${item.id}`, config)
-            .then(res => this.refreshOrdersList());
-    };
-
-    handleStatusSubmit = (item, e)=> {
-        e.preventDefault();
-        this.toggle();
-        const config = returnConfig();
-        axios
-            .put(`http://localhost:8000/medicineOrders/${item.id}/updateStatus/`, item, config)
-            .then(res => this.refreshOrdersList());
     };
 
 
@@ -118,14 +101,6 @@ class MedicineOrders extends Component {
                                             <CBadge color={this.getBadge(item.orderStatus)}>
                                                 {item.orderStatus}
                                             </CBadge>
-                                        </td>
-                                    ),
-                                'delete':
-                                    (item)=>(
-                                        <td>
-                                            <CButton color="danger" onClick={() => this.handleDelete(item)} className="btn-brand mr-1 mb-1">
-                                                <DeleteIcon/>
-                                            </CButton>
                                         </td>
                                     ),
                                 'show_details':

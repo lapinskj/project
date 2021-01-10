@@ -45,10 +45,10 @@ class MedicineOrders extends Component {
 
     getBadge = (status)=>{
         switch (status) {
-            case 'Rozpoczęte': return 'danger';
-            case 'W trakcie realizacji': return 'warning';
-            case 'Gotowe do odbioru': return 'info';
-            case 'Zakończone': return 'success';
+            case 'Placed': return 'danger';
+            case 'In preparation': return 'warning';
+            case 'Ready to pick up': return 'info';
+            case 'Finished': return 'success';
             default: return 'primary'
         }
     };

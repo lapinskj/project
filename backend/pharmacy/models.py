@@ -4,10 +4,10 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db.models.base import ObjectDoesNotExist
 
-NEW = 'Rozpoczęte'
-PROCESSED = 'W trakcie realizacji'
-READY = 'Gotowe do odbioru'
-FINISHED = 'Zakończone'
+NEW = 'Placed'
+PROCESSED = 'In preparation'
+READY = 'Ready to pick up'
+FINISHED = 'Finished'
 ORDER_STATUSES = (
     (NEW, NEW),
     (PROCESSED, PROCESSED),
@@ -114,6 +114,9 @@ class NewOrderMessage(models.Model):
 class Category(models.Model):
     code = models.CharField(max_length=10)
     name = models.CharField(max_length=150)
+
+    class Meta:
+        ordering = ['code']
 
 
 def get_image_path(instance, filename):
