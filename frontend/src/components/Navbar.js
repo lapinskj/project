@@ -7,6 +7,7 @@ import {
     CHeaderNav,
     CHeaderNavItem,
     CHeaderNavLink,
+    CToggler
 } from '@coreui/react'
 
 
@@ -37,6 +38,36 @@ class Navbar extends Component {
         )
     };
 
+    handleClickMobile = (e) =>{
+        e.preventDefault();
+        let sidebar = document.getElementsByClassName("c-sidebar");
+        sidebar = sidebar[0];
+        if (sidebar.classList.contains("c-sidebar-lg-show")){
+            sidebar.classList.remove("c-sidebar-lg-show");
+            sidebar.classList.add("c-sidebar-show");
+            let node = document.createElement("div");
+            node.className = "c-sidebar-backdrop c-show";
+            node.onclick = function() {
+                this.parentElement.removeChild(this);
+                let sidebar = document.getElementsByClassName("c-sidebar");
+                sidebar = sidebar[0];
+                sidebar.classList.remove("c-sidebar-show");
+                sidebar.classList.add("c-sidebar-lg-show");
+            };
+            document.body.appendChild(node);
+        }
+    };
+
+    handleClick = () =>{
+        let sidebar = document.getElementsByClassName("c-sidebar");
+        sidebar = sidebar[0];
+        if (sidebar.classList.contains("c-sidebar-lg-show")){
+            sidebar.classList.remove("c-sidebar-lg-show");
+        } else {
+            sidebar.classList.add("c-sidebar-lg-show");
+        }
+    };
+
     renderGuestsLinks = () => {
         return(
             <Fragment>
@@ -55,6 +86,17 @@ class Navbar extends Component {
             this.props.user && this.props.isAuthenticated ?
                 (
                     <CHeader>
+                        <CToggler
+                            inHeader
+                            className="ml-md-3 d-lg-none"
+                            onClick={e => this.handleClickMobile(e)}
+
+                        />
+                        <CToggler
+                            inHeader
+                            className="ml-3 d-md-down-none"
+                            onClick={this.handleClick}
+                        />
                         <CHeaderNav className="d-md-down-none ml-auto">
                             {this.renderAuthLinks()}
                         </CHeaderNav>
@@ -63,6 +105,16 @@ class Navbar extends Component {
                 :
                 (
                     <CHeader>
+                        <CToggler
+                            inHeader
+                            className="ml-md-3 d-lg-none"
+                            onClick={e => this.handleClickMobile(e)}
+                        />
+                        <CToggler
+                            inHeader
+                            className="ml-3 d-md-down-none"
+                            onClick={this.handleClick}
+                        />
                         <CHeaderNav className="d-md-down-none ml-auto">
                             {this.renderGuestsLinks()}
                         </CHeaderNav>
@@ -76,8 +128,9 @@ class Navbar extends Component {
 function mapStateToProps(state){
     return {
         isAuthenticated: state.auth.isAuthenticated,
-        user: state.auth.user
+        user: state.auth.user,
+        show: state.toggleSidebar.sidebarShow
     }
 }
 
-export default connect(mapStateToProps, { logout })(Navbar);
+export default connect(mapStateToProps, { logout, toggleSidebar, toggleSidebarMobile })(Navbar);

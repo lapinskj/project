@@ -13,12 +13,13 @@ import {
     CInputGroup,
     CInputGroupPrepend,
     CInputGroupText,
-    CRow
+    CRow,
+    CAlert
 } from '@coreui/react'
 import MailIcon from '@material-ui/icons/Mail';
 import LockIcon from '@material-ui/icons/Lock';
 
-const Login = ({ login, isAuthenticated }) => {
+const Login = ({ login, isAuthenticated, authenticationError }) => {
     const [formData, setFormData] = useState({
         email: '',
         password: ''
@@ -81,6 +82,11 @@ const Login = ({ login, isAuthenticated }) => {
                                             required
                                         />
                                     </CInputGroup>
+                                    {authenticationError ? (
+                                        <CAlert color="danger">
+                                            You have entered an invalid email or password
+                                        </CAlert>
+                                    ):null}
                                     <CRow>
                                         <CCol xs="6">
                                             <CButton type="submit" color="primary" className="px-4">Login</CButton>
@@ -110,7 +116,8 @@ const Login = ({ login, isAuthenticated }) => {
 };
 
 const mapStateToProps = state => ({
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    authenticationError: state.auth.authenticationError
 });
 
 export default connect(mapStateToProps, { login })(Login);

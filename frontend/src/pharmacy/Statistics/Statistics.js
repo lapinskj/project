@@ -78,12 +78,12 @@ class Statistics extends Component {
                                 </CWidgetIcon>
                             </CCol>
                             <CCol xs="12" sm="6" lg="3">
-                                <CWidgetIcon text="finished orders current month" header={this.state.ordersNumber} color="info" iconPadding={false}>
+                                <CWidgetIcon text="finished orders in current month" header={this.state.ordersNumber} color="info" iconPadding={false}>
                                     <CIcon width={24} name="cil-basket"/>
                                 </CWidgetIcon>
                             </CCol>
                             <CCol xs="12" sm="6" lg="3">
-                                <CWidgetIcon text="total price of orders current month" header={this.state.revenue} color="warning" iconPadding={false}>
+                                <CWidgetIcon text="total price of orders in current month" header={this.state.revenue} color="warning" iconPadding={false}>
                                     <CIcon width={24} name="cil-dollar"/>
                                 </CWidgetIcon>
                             </CCol>

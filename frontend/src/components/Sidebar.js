@@ -104,7 +104,8 @@ class Sidebar extends  Component {
 function mapStateToProps(state){
     return {
         isAuthenticated: state.auth.isAuthenticated,
-        user: state.auth.user
+        user: state.auth.user,
+        show: state.toggleSidebar.sidebarShow
     }
 }
 

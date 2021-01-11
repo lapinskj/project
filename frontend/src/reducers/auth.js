@@ -18,7 +18,8 @@ const initialState = {
     access: localStorage.getItem('access'),
     refresh: localStorage.getItem('refresh'),
     isAuthenticated: null,
-    user: null
+    user: null,
+    authenticationError: false
 };
 
 export default function(state = initialState, action) {
@@ -37,10 +38,10 @@ export default function(state = initialState, action) {
                 ...state,
                 isAuthenticated: true,
                 access: payload.access,
-                refresh: payload.refresh
+                refresh: payload.refresh,
+                authenticationError: true
             };
         case USER_LOADED_SUCCESS:
-            localStorage.setItem('is_staff', payload.is_staff);
             return {
                 ...state,
                 user: payload
@@ -62,16 +63,20 @@ export default function(state = initialState, action) {
             };
         case SIGNUP_FAIL:
         case LOGIN_FAIL:
+            return {
+                ...state,
+                authenticationError: true
+            };
         case LOGOUT:
             localStorage.removeItem('access');
             localStorage.removeItem('refresh');
-            localStorage.removeItem('is_staff');
             return {
                 ...state,
                 access: null,
                 refresh: null,
                 isAuthenticated: false,
-                user: null
+                user: null,
+                authenticationError: false
             };
         case ACCOUNT_UPDATE_SUCCESS:
             return {

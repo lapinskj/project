@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from django.http import JsonResponse
 from pharmacy.models import *
 from pharmacy.serializers import *
 from rest_framework.decorators import action
@@ -7,7 +8,7 @@ from rest_framework import viewsets, status
 from django_filters import rest_framework as filters
 from .permissions import *
 from django.core.mail import send_mail
-from datetime import date
+from datetime import date, timedelta, datetime
 
 
 # Filter class
@@ -66,6 +67,17 @@ class CustomerViewSet(viewsets.ModelViewSet):
         count = queryset.count()
         content = {'count': count}
         return Response(content)
+
+
+def days_cur_month():
+    m = datetime.now().month
+    y = datetime.now().year
+    ndays = (date(y, m+1, 1) - date(y, m, 1)).days
+    d1 = date(y, m, 1)
+    d2 = date(y, m, ndays)
+    delta = d2 - d1
+
+    return [(d1 + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(delta.days + 1)]
 
 
 class MedicineOrderViewSet(viewsets.ModelViewSet):
@@ -156,6 +168,18 @@ class MedicineOrderViewSet(viewsets.ModelViewSet):
             revenue = revenue + order.total_price
         content = {'revenue': revenue}
         return Response(content)
+
+    @action(detail=False, methods=['get'], url_path='orderStatistics')
+    def order_statistics(self, request):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        results = []
+        for day in days_cur_month():
+            queryset = self.filter_queryset(self.get_queryset())
+            queryset = queryset.filter(orderStatus='Placed', created=day)
+            count = queryset.count()
+            results.append({'day': day, 'count': count})
+        return JsonResponse(results, safe=False)
 
 
 class MedicineViewSet(viewsets.ModelViewSet):
