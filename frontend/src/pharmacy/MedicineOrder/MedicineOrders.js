@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 import {CBadge, CButton, CCard, CCardBody, CCardHeader, CDataTable, CCollapse, CImg, CRow, CCol} from "@coreui/react";
 import DeleteIcon from "@material-ui/icons/Delete";
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
-import medicine_orders_fields from "../FormFields/medicineOrders";
+import medicine_orders_fields from "../TableFields/medicineOrders";
 import returnConfig from "../returnConfig";
 
 

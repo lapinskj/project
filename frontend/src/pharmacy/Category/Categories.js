@@ -10,7 +10,7 @@ import {
 } from '@coreui/react'
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import categories_fields from "../FormFields/categories";
+import categories_fields from "../TableFields/categories";
 import returnConfig from "../returnConfig";
 
 

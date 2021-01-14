@@ -28,7 +28,7 @@ class MessagesCounter extends Component {
         this.getUnreadMessagesCount();
         this.interval = setInterval(() => {
             this.getUnreadMessagesCount();
-        }, 6000);
+        }, 300000);
     }
 
     componentWillUnmount() {

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import {CButton, CCard, CCardBody, CCardHeader, CDataTable, CImg, CBadge} from '@coreui/react'
-import medicines_user_fields from "../FormFields/medicinesUser"
+import medicines_user_fields from "../TableFields/medicinesUser"
 import returnConfig from "../returnConfig";
 
 class Medicines extends Component {

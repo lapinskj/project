@@ -12,7 +12,7 @@ import {
     CImg, CInput,
     CLabel
 } from "@coreui/react";
-import medicines_user_fields from "../FormFields/medicinesUser";
+import medicines_user_fields from "../TableFields/medicinesUser";
 
 
 class SearchMedicines extends Component {

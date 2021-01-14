@@ -202,6 +202,23 @@ class MedicineViewSet(viewsets.ModelViewSet):
         content = {'count': count}
         return Response(content)
 
+    @action(detail=False, methods=['get'], url_path='medicineStatistics')
+    def medicine_statistics(self, request):
+        if not request.user.is_staff:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        queryset = self.filter_queryset(self.get_queryset())
+        order_items = MedicineOrderItem.objects.all()
+        results = []
+        for medicine in queryset:
+            order_items_medicine = order_items.filter(medicine=medicine)
+            total_amount = 0
+            for item in order_items_medicine:
+                total_amount = total_amount + item.amount
+            serializer = MedicineListSerializer(medicine)
+            results.append({'medicine': serializer.data, 'total_amount': total_amount})
+        results.sort(key=lambda x: x.get('total_amount'), reverse=True)
+        return JsonResponse(results, safe=False)
+
 
 class MedicineOrderItemViewSet(viewsets.ModelViewSet):
     queryset = MedicineOrderItem.objects.all()

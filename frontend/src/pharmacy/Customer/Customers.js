@@ -4,7 +4,7 @@ import axios from "axios";
 import {CButton, CCard, CCardBody, CCardHeader, CDataTable} from "@coreui/react";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
-import customers_fields from "../FormFields/customers";
+import customers_fields from "../TableFields/customers";
 import returnConfig from "../returnConfig";
 
 class Customers extends Component {

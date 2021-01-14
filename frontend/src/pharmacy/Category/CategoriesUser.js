@@ -6,7 +6,7 @@ import {
     CCardHeader,
     CDataTable
 } from '@coreui/react'
-import categories_user_fields from "../FormFields/categoriesUser";
+import categories_user_fields from "../TableFields/categoriesUser";
 import returnConfig from "../returnConfig";
 
 

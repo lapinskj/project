@@ -22,7 +22,6 @@ class Navbar extends Component {
     }
 
 
-
     renderAuthLinks = () => {
         return(
             <Fragment>
@@ -128,9 +127,8 @@ class Navbar extends Component {
 function mapStateToProps(state){
     return {
         isAuthenticated: state.auth.isAuthenticated,
-        user: state.auth.user,
-        show: state.toggleSidebar.sidebarShow
+        user: state.auth.user
     }
 }
 
-export default connect(mapStateToProps, { logout, toggleSidebar, toggleSidebarMobile })(Navbar);
+export default connect(mapStateToProps, { logout })(Navbar);

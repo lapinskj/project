@@ -6,10 +6,14 @@ import {
     CWidgetIcon,
     CCard,
     CCardBody,
-    CCardHeader
+    CCardHeader, CImg, CButton, CBadge, CDataTable
 } from '@coreui/react'
+import {
+    CChartLine
+} from '@coreui/react-chartjs'
 import CIcon from "@coreui/icons-react";
 import returnConfig from "../returnConfig";
+import medicines_statistics_fields from "../TableFields/medicinesStatistics";
 
 class Statistics extends Component {
 
@@ -19,7 +23,10 @@ class Statistics extends Component {
             ordersNumber: '',
             customersNumber: '',
             medicinesNumber: '',
-            revenue: ''
+            revenue: '',
+            orderChartDays: null,
+            orderChartNum: null,
+            medicineStats: null
         };
     }
 
@@ -28,6 +35,8 @@ class Statistics extends Component {
         this.getCustomersNumber();
         this.getRevenue();
         this.getMedicinesNumber();
+        this.getOrdersStatistics();
+        this.getMedicinesStatistics()
     }
 
     getOrdersNumber = () => {
@@ -62,13 +71,77 @@ class Statistics extends Component {
             .catch(err => console.log(err));
     };
 
+    getMedicinesStatistics = () => {
+        const config = returnConfig();
+        axios
+            .get("http://localhost:8000/medicines/medicineStatistics/", config)
+            .then(res => {this.setState({ medicineStats: res.data })})
+            .catch(err => console.log(err));
+    };
+
+    getOrdersStatistics = () => {
+        const config = returnConfig();
+        axios
+            .get(`http://localhost:8000/medicineOrders/orderStatistics/`, config)
+            .then(res => {
+                let days = [];
+                let numbers = [];
+                res.data.map(item => {
+                    days.push(item.day);
+                    numbers.push(item.count);
+                });
+                this.setState({orderChartDays: days, orderChartNum: numbers});
+            })
+            .catch(err => console.log(err));
+    };
+
+    renderMedicineStatistic = () => {
+        const medicineStats = this.state.medicineStats;
+        return (
+            <CDataTable
+                items={medicineStats}
+                fields={medicines_statistics_fields}
+                itemsPerPage={5}
+                pagination
+                itemsPerPageSelect
+                scopedSlots = {{
+                    'image':
+                        (item)=>(
+                            <td>
+                                <CImg src={'http://localhost:8000'.concat(item.medicine.image)} height={50}/>
+                            </td>
+                        ),
+                    'medicine':
+                        (item)=>(
+                            <td>
+                                {item.medicine.name}, {item.medicine.brand}, {item.medicine.dose}, {item.medicine.capacity}
+                            </td>
+                        ),
+                    'category':
+                        (item)=>(
+                            <td>
+                                <CBadge color="primary">
+                                    {item.medicine.category.name}
+                                </CBadge>
+                            </td>
+                        ),
+                    'sold':
+                        (item)=>(
+                            <td>
+                                {item.total_amount}
+                            </td>
+                        )
+                }}
+            />
+        )
+    }
 
     render() {
         return (
             <>
                 <CCard>
                     <CCardHeader>
-                        <h4>Statistics</h4>
+                        <h3>Statistics</h3>
                     </CCardHeader>
                     <CCardBody>
                         <CRow>
@@ -92,6 +165,31 @@ class Statistics extends Component {
                                     <CIcon width={24} name="cil-medical-cross"/>
                                 </CWidgetIcon>
 
+                            </CCol>
+                        </CRow>
+                        <CRow className="mt-2 p-2">
+                            <CCol lg="7">
+                                <h4 className="pb-1">Number of orders per day in current month</h4>
+                                <CChartLine
+                                    datasets={[
+                                        {
+                                            label: 'Number of orders',
+                                            backgroundColor: 'rgb(228,102,81,0.9)',
+                                            pointHoverBackgroundColor: 'rgba(69,29,25,0.9)',
+                                            data: this.state.orderChartNum
+                                        }
+                                    ]}
+                                    options={{
+                                        tooltips: {
+                                            enabled: true
+                                        }
+                                    }}
+                                    labels={this.state.orderChartDays}
+                                />
+                            </CCol>
+                            <CCol lg="5">
+                                <h4>Top selling products</h4>
+                                {this.state.medicineStats ? this.renderMedicineStatistic() : null}
                             </CCol>
                         </CRow>
                     </CCardBody>

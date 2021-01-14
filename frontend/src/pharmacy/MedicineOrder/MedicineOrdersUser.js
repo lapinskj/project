@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import {Link} from "react-router-dom";
 import {CBadge, CButton, CCard, CCardBody, CCardHeader, CDataTable, CCollapse, CImg, CRow, CCol} from "@coreui/react";
-import medicine_orders_user_fields from "../FormFields/medicineOrdersUser";
+import medicine_orders_user_fields from "../TableFields/medicineOrdersUser";
 import returnConfig from "../returnConfig";
 
 

@@ -3,7 +3,7 @@ import EditMedicineModal from "./EditMedicineModal";
 import EditMedicineImageModal from "./EditMedicineImageModal";
 import axios from "axios";
 import {CButton, CCard, CCardBody, CCardHeader, CDataTable, CImg, CBadge} from '@coreui/react'
-import medicines_fields from "../FormFields/medicines";
+import medicines_fields from "../TableFields/medicines";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import returnConfig from "../returnConfig";
@@ -105,6 +105,7 @@ class Medicines extends Component {
                             itemsPerPage={5}
                             pagination
                             sorter
+                            itemsPerPageSelect
                             columnFilter
                             scopedSlots = {{
                                 'image':
