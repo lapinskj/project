@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from pharmacy.models import *
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
 from djoser.serializers import UserCreateSerializer, UserSerializer
 User = get_user_model()
 
@@ -32,6 +33,12 @@ class CustomerSerializerUser(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
+        fields = '__all__'
+
+
+class NoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderNote
         fields = '__all__'
 
 
@@ -70,10 +77,11 @@ class MedicineOrderItemGetSerializer(serializers.ModelSerializer):
 class MedicineOrderSerializerList(serializers.ModelSerializer):
     customer = CustomerSerializer()
     medicineOrderItems = MedicineOrderItemGetSerializer(many=True)
+    notes = NoteSerializer(many=True)
 
     class Meta:
         model = MedicineOrder
-        fields = ('id', 'customer', 'total_price', 'orderStatus', 'medicineOrderItems', 'created')
+        fields = ('id', 'customer', 'total_price', 'orderStatus', 'medicineOrderItems', 'created', 'notes')
 
 
 class NewOrderMessageSerializerList(serializers.ModelSerializer):
@@ -85,6 +93,27 @@ class NewOrderMessageSerializerList(serializers.ModelSerializer):
 
 
 # POST / PUT serializers
+class NoteCreateSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = OrderNote
+        fields = ('id', 'order', 'author', 'content', 'user')
+
+    def create(self, validated_data):
+        note = OrderNote.objects.create(user=self.context['request'].user, **validated_data)
+        medicine_order = MedicineOrder.objects.get(id=self.context['request'].data.get('order'))
+        if self.context['request'].user.is_staff and medicine_order.customer.user:
+            email = medicine_order.customer.user.email
+            title = ["New note in order number ", str(medicine_order.id)]
+            title = ''.join(title)
+            content = ["We would like to inform that Pharmacist has added new note to order number ",
+                       str(medicine_order.id)]
+            content = ''.join(content)
+            send_mail(title, content, 'from@example.com', [email])
+        return note
+
+
 class MedicineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Medicine

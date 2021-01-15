@@ -8,11 +8,12 @@ import {
     CImg,
     CRow,
     CCol,
-    CFormGroup, CLabel, CInputGroup, CInputGroupPrepend, CInput, CSelect, CForm, CCardFooter
+    CFormGroup, CLabel, CInputGroup, CInputGroupPrepend, CInput, CSelect, CForm, CCardFooter, CListGroupItem, CTextarea
 } from "@coreui/react";
 import returnConfig from "../returnConfig";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SearchIcon from "@material-ui/icons/Search";
+import {connect} from "react-redux";
 
 class MedicineOrder extends Component {
     constructor(props) {
@@ -26,6 +27,7 @@ class MedicineOrder extends Component {
             medicinesList: [],
             activeMedicine: null,
             orderItem: {},
+            note: ""
         };
     }
 
@@ -47,10 +49,30 @@ class MedicineOrder extends Component {
             .then(res => this.getMedicineOrder());
     };
 
+    onNoteChange = e => {
+        let { value } = e.target;
+        const note = value;
+        this.setState({ note });
+    };
+
     onMedicineSearchChange = e => {
         let { name, value } = e.target;
         const medicineSearchValue = { [name]: value };
         this.setState({ medicineSearchValue });
+    };
+
+    onNoteAdd = (e) => {
+        e.preventDefault();
+        let {note, medicineOrder} = this.state;
+        let author = this.props.user.name + " " + this.props.user.surname;
+        let noteItem = {'content': note, 'order': medicineOrder.id, 'author': author};
+        const config = returnConfig();
+        axios
+            .post("http://localhost:8000/orderNotes/", noteItem, config)
+            .then(res => {
+                this.getMedicineOrder();
+            })
+            .catch(err => console.log(err));
     };
 
 
@@ -231,6 +253,47 @@ class MedicineOrder extends Component {
 
                 <CCard>
                     <CCardHeader>
+                        <h4>Order notes</h4>
+                    </CCardHeader>
+                    <CCardBody>
+                        {
+                            medicineOrder.notes ?
+                                (
+                                    medicineOrder.notes.map(item => (
+                                        <CListGroupItem key={item.id} action>
+                                            <h5 className="d-flex w-100 justify-content-between">
+                                                <div>
+                                                    {item.author} wrote:
+                                                </div>
+                                                <div>
+                                                    <small>{item.created_at}</small>
+                                                </div>
+                                            </h5>
+                                            <p className="pl-2" >{item.content}</p>
+                                        </CListGroupItem>
+                                    ))
+                                ) : null
+                        }
+                        <CForm id="addNote" onSubmit={e => this.onNoteAdd(e)}>
+                            <CFormGroup>
+                                <CLabel htmlFor="note" col="lg">Add note</CLabel>
+                                <CTextarea
+                                    name="note"
+                                    id="note"
+                                    rows="4"
+                                    placeholder="Type your note..."
+                                    value={this.state.note}
+                                    onChange={this.onNoteChange}
+                                    required
+                                />
+                            </CFormGroup>
+                            <CButton form="addNote" type="submit" size="lg" color="primary">Add</CButton>
+                        </CForm>
+                    </CCardBody>
+                </CCard>
+
+                <CCard>
+                    <CCardHeader>
                         <h4>Add new order item</h4>
                     </CCardHeader>
                     <CCardBody>
@@ -307,4 +370,8 @@ class MedicineOrder extends Component {
 
 }
 
-export default MedicineOrder;
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+export default connect(mapStateToProps)(MedicineOrder);

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { connect } from 'react-redux';
 import UpdateOrderStatusModal from "./UpdateOrderStatusModal";
 import {
     CButton,
@@ -9,7 +10,8 @@ import {
     CImg,
     CRow,
     CCol,
-    CFormGroup, CLabel, CInputGroup, CInputGroupPrepend, CInput, CSelect, CForm, CCardFooter
+    CFormGroup, CLabel, CInputGroup, CInputGroupPrepend, CInput,
+    CSelect, CForm, CCardFooter, CListGroupItem, CTextarea
 } from "@coreui/react";
 import returnConfig from "../returnConfig";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -27,6 +29,7 @@ class MedicineOrder extends Component {
             medicinesList: [],
             activeMedicine: null,
             orderItem: {},
+            note: ""
         };
     }
 
@@ -57,6 +60,13 @@ class MedicineOrder extends Component {
         };
         axios
             .delete(`http://localhost:8000/medicineOrderItem/${item.id}`, config)
+            .then(res => this.getMedicineOrder());
+    };
+
+    handleNoteDelete = item => {
+        const config = returnConfig();
+        axios
+            .delete(`http://localhost:8000/orderNotes/${item.id}`, config)
             .then(res => this.getMedicineOrder());
     };
 
@@ -105,6 +115,12 @@ class MedicineOrder extends Component {
         this.setState({ orderItem });
     };
 
+    onNoteChange = e => {
+        let { value } = e.target;
+        const note = value;
+        this.setState({ note });
+    };
+
     renderMedicines = () => {
         const medicinesList = this.state.medicinesList;
         return medicinesList.map(medicine => (
@@ -114,17 +130,25 @@ class MedicineOrder extends Component {
         ));
     };
 
+    onNoteAdd = (e) => {
+        e.preventDefault();
+        let {note, medicineOrder} = this.state;
+        let author = "Pharmacist";
+        let noteItem = {'content': note, 'order': medicineOrder.id, 'author': author};
+        const config = returnConfig();
+        axios
+            .post("http://localhost:8000/orderNotes/", noteItem, config)
+            .then(res => {
+                this.getMedicineOrder();
+            })
+            .catch(err => console.log(err));
+    };
+
     onMedicineOrderItemSave = (e) => {
         e.preventDefault();
         let {orderItem, medicineOrder} = this.state;
         let newOrderItem = {medicineOrder: medicineOrder.id, medicine: orderItem.medicine, amount: orderItem.amount};
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `JWT ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            }
-        };
+        const config = returnConfig();
         axios
             .post("http://localhost:8000/medicineOrderItem/", newOrderItem, config)
             .then(res => {
@@ -249,6 +273,50 @@ class MedicineOrder extends Component {
 
                 <CCard>
                     <CCardHeader>
+                        <h4>Order notes</h4>
+                    </CCardHeader>
+                    <CCardBody>
+                        {
+                            medicineOrder.notes ?
+                                (
+                                    medicineOrder.notes.map(item => (
+                                        <CListGroupItem key={item.id} action>
+                                            <h5 className="d-flex w-100 justify-content-between">
+                                                <div>
+                                                    {item.author} wrote:
+                                                </div>
+                                                <div>
+                                                    <small>{item.created_at}</small>
+                                                    <CButton onClick={() => this.handleNoteDelete(item)} className="btn btn-danger ml-3">
+                                                        <DeleteIcon/>
+                                                    </CButton>
+                                                </div>
+                                            </h5>
+                                            <p className="pl-2" >{item.content}</p>
+                                        </CListGroupItem>
+                                    ))
+                                ) : null
+                        }
+                        <CForm id="addNote" onSubmit={e => this.onNoteAdd(e)}>
+                            <CFormGroup>
+                                <CLabel htmlFor="note" col="lg">Add note</CLabel>
+                                <CTextarea
+                                    name="note"
+                                    id="note"
+                                    rows="4"
+                                    placeholder="Type your note..."
+                                    value={this.state.note}
+                                    onChange={this.onNoteChange}
+                                    required
+                                />
+                            </CFormGroup>
+                            <CButton form="addNote" type="submit" size="lg" color="primary">Add</CButton>
+                        </CForm>
+                    </CCardBody>
+                </CCard>
+
+                <CCard>
+                    <CCardHeader>
                         <h4>Add new order item</h4>
                     </CCardHeader>
                     <CCardBody>
@@ -318,7 +386,7 @@ class MedicineOrder extends Component {
                 ) : null}
             </>
         );
-    }
+    };
 
     render () {
         return (
@@ -333,4 +401,8 @@ class MedicineOrder extends Component {
 
 }
 
-export default MedicineOrder;
+const mapStateToProps = state => ({
+    user: state.auth.user
+});
+
+export default connect(mapStateToProps)(MedicineOrder);

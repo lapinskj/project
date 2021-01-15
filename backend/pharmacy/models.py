@@ -102,6 +102,14 @@ class MedicineOrder(models.Model):
         return f'({self.id} {self.created}) {self.customer} {self.total_price}'
 
 
+class OrderNote(models.Model):
+    order = models.ForeignKey(MedicineOrder, related_name="notes", on_delete=models.CASCADE)
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
+    author = models.CharField(max_length=50)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class NewOrderMessage(models.Model):
     medicine_order = models.OneToOneField(MedicineOrder, on_delete=models.CASCADE, related_name='newOrderMessage')
     started = models.DateTimeField(auto_now_add=True)

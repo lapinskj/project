@@ -277,6 +277,32 @@ class MedicineOrderItemViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
 
+class NoteViewset(viewsets.ModelViewSet):
+    queryset = OrderNote.objects.all()
+    serializer_class = NoteSerializer
+    filterset_fields = ('order',)
+
+    def get_serializer_class(self):
+        if self.request.method in ['GET', 'DELETE']:
+            return NoteSerializer
+        return NoteCreateSerializer
+
+    def get_permissions(self):
+        permission_classes = []
+        if self.action in ('create', 'list', 'retrieve'):
+            permission_classes = [IsLoggedInUserOrAdmin]
+        elif self.action in ('update', 'partial_update', 'destroy'):
+            permission_classes = [IsStaff]
+        return [permission() for permission in permission_classes]
+
+    def get_queryset(self):
+        queryset = OrderNote.objects.all()
+        is_staff = self.request.user.is_staff
+        if not is_staff:
+            queryset = queryset.filter(order__customer__user=self.request.user)
+        return queryset
+
+
 class NewOrderMessageViewSet(viewsets.ModelViewSet):
     queryset = NewOrderMessage.objects.all()
     serializer_class = NewOrderMessageSerializer
